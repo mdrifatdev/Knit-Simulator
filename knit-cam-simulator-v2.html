@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>নিটিং ক্যাম সিমুলেটর</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#eef1f4; --card:#ffffff; --ink:#1c2230; --mute:#5f6b7d; --line:#d7dde5;
+  --accent:#3b3f8f; --accent-ink:#ffffff; --fabric:#f7f9fb; --grid:#e3e8ee;
+  --k:#dfe8ff; --t:#ffe9c7; --m:#eceff3;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12151b; --card:#1a1f28; --ink:#e7eaf0; --mute:#97a1b2; --line:#2c3441;
+    --accent:#8c92f0; --accent-ink:#12151b; --fabric:#0f1217; --grid:#1c222c;
+    --k:#26325a; --t:#5a4420; --m:#252c38;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12151b; --card:#1a1f28; --ink:#e7eaf0; --mute:#97a1b2; --line:#2c3441;
+  --accent:#8c92f0; --accent-ink:#12151b; --fabric:#0f1217; --grid:#1c222c;
+  --k:#26325a; --t:#5a4420; --m:#252c38;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Hind Siliguri","Noto Sans Bengali","Segoe UI",system-ui,sans-serif;
+  font-size:15px;line-height:1.55}
+main{max-width:960px;margin:0 auto;padding:14px 12px 40px}
+h1{font-size:22px;margin:4px 0 2px;font-weight:700}
+.sub{color:var(--mute);margin:0 0 14px;font-size:14px}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+h2{font-size:15px;margin:0 0 10px;font-weight:600}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+select,input[type=text]{font:inherit;color:var(--ink);background:var(--fabric);border:1px solid var(--line);
+  border-radius:8px;padding:8px 10px;min-height:40px}
+input[type=text]{width:110px;letter-spacing:.12em;text-transform:uppercase}
+.step{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--fabric)}
+.step button{width:38px;height:38px;border:0;background:transparent;color:var(--ink);font-size:20px;cursor:pointer}
+.step span{min-width:34px;text-align:center;font-weight:600}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--fabric);color:var(--ink);padding:7px 12px;border-radius:8px}
+.tab[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.hint{font-size:13px;color:var(--mute);margin:8px 0 0}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{padding:4px 5px;text-align:center;font-size:13px}
+th{color:var(--mute);font-weight:500;position:sticky;top:0;background:var(--card)}
+td.fd{font-weight:600;color:var(--mute)}
+td.yn{text-align:left;min-width:150px}
+td.yn .lb{display:block;font-size:12px;color:var(--mute);line-height:1.3;margin-top:2px}
+td input[type=color]{width:36px;height:32px;border:1px solid var(--line);border-radius:6px;padding:1px;background:var(--fabric)}
+.cam{width:44px;height:36px;border:1px solid var(--line);border-radius:8px;font-size:18px;font-weight:700;color:var(--ink)}
+.cam[data-v="K"]{background:var(--k)}
+.cam[data-v="T"]{background:var(--t)}
+.cam[data-v="M"]{background:var(--m);color:var(--mute)}
+.off{opacity:.3}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mute);margin:0 0 8px}
+.legend b{color:var(--ink);font-size:16px;margin-right:3px}
+.canvaswrap{background:var(--fabric);border:1px solid var(--line);border-radius:8px;padding:8px;overflow-x:auto}
+canvas{display:block}
+.warn{margin:10px 0 0;padding:0;list-style:none;font-size:13px}
+.warn li{padding:6px 10px;border-radius:8px;background:var(--t);margin-top:6px}
+.ok{background:var(--k)!important}
+.mini{border:1px solid var(--line);background:var(--fabric);color:var(--ink);border-radius:8px;padding:7px 12px;min-height:38px}
+details.info summary{cursor:pointer;font-weight:600;font-size:16px}
+details.info p{margin:8px 0 0}
+details.info b{color:var(--accent)}
+.note{background:var(--t);padding:8px 10px;border-radius:8px;font-size:13px;margin-top:10px}
+.stepper{display:flex;gap:10px;align-items:center;margin:0 0 6px}
+.stepper input[type=range]{flex:1;min-width:80px;accent-color:var(--accent)}
+.play{border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:7px 14px;min-height:38px;white-space:nowrap}
+.now{font-size:14px;margin:4px 0 10px;padding:8px 10px;border-radius:8px;background:var(--k)}
+.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+</style>
+</head>
+<body>
+<main>
+  <h1>নিটিং ক্যাম সিমুলেটর</h1>
+  <p class="sub">প্রতিটি ফিডারে ক্যাম বসান, ফেব্রিকের ডিজাইন সঙ্গে সঙ্গে দেখুন।</p>
+
+  <section>
+    <h2>১. মেশিন সেটআপ</h2>
+    <div class="row">
+      <label class="f">প্রিসেট
+        <select id="preset">
+          <option value="sheet">আপনার শিট (১৮ ফিডার)</option>
+          <option value="rib11">1×1 রিব</option>
+          <option value="rib22">2×2 রিব</option>
+          <option value="interlock">ইন্টারলক</option>
+          <option value="pique">পিকে</option>
+          <option value="waffle">ওয়াফল</option>
+          <option value="tuck">টাক ডিজাইন (র‍্যাপ্লে টাইপ)</option>
+          <option value="cardigan">ফুল কার্ডিগান</option>
+          <option value="custom">নিজের ডিজাইন</option>
+        </select>
+      </label>
+      <label class="f">ফিডার (রিপিট)
+        <div class="step"><button id="fMinus" aria-label="ফিডার কমান">−</button><span id="fVal"></span><button id="fPlus" aria-label="ফিডার বাড়ান">+</button></div>
+      </label>
+      <label class="f">রাউন্ড
+        <div class="step"><button id="rMinus" aria-label="রাউন্ড কমান">−</button><span id="rVal"></span><button id="rPlus" aria-label="রাউন্ড বাড়ান">+</button></div>
+      </label>
+      <label class="f">ওয়েল (সুই-অবস্থান)
+        <div class="step"><button id="wMinus" aria-label="ওয়েল কমান">−</button><span id="wVal"></span><button id="wPlus" aria-label="ওয়েল বাড়ান">+</button></div>
+      </label>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label class="f">সুই বিন্যাস
+        <input type="text" id="layout" maxlength="12" autocapitalize="characters" aria-describedby="layoutHelp">
+      </label>
+      <label class="f">সিলিন্ডার বাট
+        <input type="text" id="cylButt" maxlength="6" inputmode="numeric">
+      </label>
+      <label class="f">ডায়াল বাট
+        <input type="text" id="dialButt" maxlength="6" inputmode="numeric">
+      </label>
+    </div>
+    <p class="hint" id="layoutHelp">বিন্যাস: <b>C</b> = শুধু সিলিন্ডার সুই, <b>D</b> = শুধু ডায়াল সুই, <b>B</b> = দুটোই। বাট: সিলিন্ডারে ১, ২, ৩ আর ডায়ালে ১, ২ (শিটের "Needle" সারির মতো)। যেমন সিলিন্ডারে <b>123</b> লিখলে সুই পালা করে বাট ১, ২, ৩ বসে। এই প্যাটার্ন পুরো মেশিনে রিপিট হয়। বাট ইংরেজি সংখ্যা (1, 2, 3) দিয়ে লিখুন।</p>
+  </section>
+
+  <section>
+    <details class="info" open>
+      <summary id="infoTitle">এই ডিজাইনটা কী</summary>
+      <div id="infoBody"></div>
+    </details>
+  </section>
+
+  <section>
+    <h2>২. ক্যাম অ্যারেঞ্জমেন্ট</h2>
+    <p class="legend" id="legend"></p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>ফিডার</th><th>সুতা</th><th id="hD1">ডায়াল ১</th><th id="hD2">ডায়াল ২</th><th id="hC1">সিলি. ১</th><th id="hC2">সিলি. ২</th><th id="hC3">সিলি. ৩</th></tr></thead>
+        <tbody id="camBody"></tbody>
+      </table>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="mini" id="sameColor">সব ফিডারে প্রথম রঙ</button>
+      <button class="mini" id="stripeColor">ফিডার অনুযায়ী আলাদা রঙ</button>
+      <label class="mini" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="mirror"> ডায়ালে নিট = ∨ (শিটের মতো)</label>
+    </div>
+  </section>
+
+  <section>
+    <h2>৩. ফেব্রিক</h2>
+    <div class="tabs" role="group" aria-label="ভিউ">
+      <button class="tab" data-view="face" aria-pressed="true">সামনের দিক</button>
+      <button class="tab" data-view="back" aria-pressed="false">পেছনের দিক</button>
+      <button class="tab" data-view="map" aria-pressed="false">সুই-ম্যাপ</button>
+    </div>
+    <div class="stepper">
+      <button class="play" id="play">▶ ধাপে ধাপে</button>
+      <input type="range" id="upto" min="1" max="36" value="36" aria-label="কোর্স পর্যন্ত দেখান">
+    </div>
+    <div class="now" id="now"></div>
+    <div class="tools">
+      <label class="f" style="flex-direction:row;align-items:center;gap:8px">আকার
+        <select id="zoom">
+          <option value="1">স্বাভাবিক</option>
+          <option value="1.6">বড়</option>
+          <option value="2.2">অনেক বড়</option>
+        </select>
+      </label>
+    </div>
+    <div class="canvaswrap" id="wrap"><canvas id="cv" role="img" aria-label="ফেব্রিকের সিমুলেশন"></canvas></div>
+    <p class="hint" id="viewHint"></p>
+    <ul class="warn" id="warn"></ul>
+  </section>
+
+  <p class="hint">এটা ডিজাইন বোঝার টুল। সুতার টান, স্ট্রেচ বা GSM এখানে হিসাব হয় না। প্রিসেটগুলো সরলীকৃত, আসল কারখানার ক্যাম চার্ট মেশিন ব্র্যান্ড অনুযায়ী আলাদা হতে পারে।</p>
+</main>
+
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+var SYM = {K:"∧", T:"∨", M:"—"};
+var SYM_D = {K:"∨", T:"∧", M:"—"};
+var NEXT = {K:"T", T:"M", M:"K"};
+var BASE = "#3b6fb6";
+var PALETTE = ["#3b6fb6","#d9822b","#2f9e6d","#c44569","#7d5ba6","#2aa5b8","#b5a12a","#6b7280"];
+var SETS = [
+  {key:"d1", name:"ডায়াল ১", bed:"dial", butt:"1", head:"hD1"},
+  {key:"d2", name:"ডায়াল ২", bed:"dial", butt:"2", head:"hD2"},
+  {key:"c1", name:"সিলিন্ডার ১", bed:"cyl", butt:"1", head:"hC1"},
+  {key:"c2", name:"সিলিন্ডার ২", bed:"cyl", butt:"2", head:"hC2"},
+  {key:"c3", name:"সিলিন্ডার ৩", bed:"cyl", butt:"3", head:"hC3"}
+];
+var ALL_K = ["K","K","K","K","K"];
+
+/* cam order per feeder: [dial1, dial2, cyl1, cyl2, cyl3] */
+var SHEET = [
+  "MMKMM","KMMMM","KMMKK","MMKMM","MKMMM","MKMKK",
+  "MMMKM","KMMMM","KMKMK","MMMKM","MKMMM","MKKMK",
+  "MMMMK","KMMMM","KMKKM","MMMMK","MKMMM","MKKKM"
+].map(function(s){ return s.split(""); });
+var SHEET_YARN = [
+  {c:"#3b6fb6", l:"30/1 কটন · SL 1.95"},
+  {c:"#d9822b", l:"75D/36F পলি + 70D লাইক্রা · SL 1.95+1.00"},
+  {c:"#2f9e6d", l:"20/1 কটন · SL 3.95"}
+];
+
+var PRESETS = {
+  sheet:{ F:18, wales:36, layout:"CD", cyl:"123", dial:"12", mirror:true,
+    cams:SHEET,
+    colors:SHEET.map(function(_,i){ return SHEET_YARN[i%3].c; }),
+    labels:SHEET.map(function(_,i){ return SHEET_YARN[i%3].l; }) },
+  rib11:{ F:4, wales:24, layout:"CD", cyl:"1", dial:"1", mirror:false, cams:[ALL_K,ALL_K,ALL_K,ALL_K] },
+  rib22:{ F:4, wales:24, layout:"CCDD", cyl:"1", dial:"1", mirror:false, cams:[ALL_K,ALL_K,ALL_K,ALL_K] },
+  interlock:{ F:2, wales:24, layout:"B", cyl:"12", dial:"12", mirror:false,
+    cams:[["K","M","K","M","M"],["M","K","M","K","M"]] },
+  pique:{ F:4, wales:24, layout:"CD", cyl:"12", dial:"1", mirror:false,
+    cams:[["K","K","K","T","M"],["K","K","K","M","M"],["K","K","T","K","M"],["K","K","M","K","M"]] },
+  waffle:{ F:4, wales:24, layout:"CD", cyl:"12", dial:"12", mirror:false,
+    cams:[["K","T","K","T","M"],["K","T","K","T","M"],["T","K","T","K","M"],["T","K","T","K","M"]] },
+  tuck:{ F:4, wales:24, layout:"CD", cyl:"1", dial:"12", mirror:false,
+    cams:[["K","K","K","M","M"],["K","T","K","M","M"],["K","K","K","M","M"],["T","K","K","M","M"]] },
+  cardigan:{ F:2, wales:24, layout:"CD", cyl:"1", dial:"1", mirror:false,
+    cams:[["T","M","K","M","M"],["K","M","T","M","M"]] }
+};
+
+var INFO = {
+  sheet:{ t:"আপনার শিট: ১৮ ফিডারের রিব ডিজাইন",
+    what:"38×18 মেশিন। সিলিন্ডারে ৩টা ট্র্যাক (বাট ১, ২, ৩), ডায়ালে ২টা (বাট ১, ২)। ৩ ফিডারের ইয়ার্ন-রিপিট ৬ বার চলে: ৩০/১ কটন, পলি+লাইক্রা, ২০/১ কটন।",
+    how:"প্রতিটি সুই সেট ১৮ ফিডারে মাত্র ৬ বার নিট করে, বাকি ফিডারে মিস। কোন সেট কোন ফিডারে নিট করে, সেটাই নকশা। পলি+লাইক্রা ফিডারে (২, ৫, ৮, ১১, ১৪, ১৭) শুধু ডায়াল নিট করে, সিলিন্ডার কখনো নয়।",
+    look:"সামনের দিকে (সিলিন্ডার) শুধু কটন দেখা যায়, লাইক্রা নয়। লাইক্রা পেছনে ডায়ালের লুপে থাকে, তাতেই স্ট্রেচ আসে। 'সুই-ম্যাপ' ভিউতে সব একসাথে দেখুন, আর 'ধাপে ধাপে' চালিয়ে দেখুন ফিডার ধরে ফেব্রিক কীভাবে গড়ে ওঠে।",
+    use:"৩৮০ GSM স্ট্রেচ রিব, ৮৯% কটন, ৮% পলিয়েস্টার, ৩% ইলাস্টেন।",
+    note:"ছবি থেকে পড়া। ডায়ালের সারিতে শুধু ∨ আছে, ∧ একবারও নেই, আর লাইক্রা শুধু ডায়ালে নিট হচ্ছে। তাই ডায়ালের ∨ কে নিট ধরেছি (উপরে টিক দেওয়া 'ডায়ালে নিট = ∨')। এটা আমার অনুমান, আসল শিটের সঙ্গে মিলিয়ে নিন। সিলিন্ডার ও ডায়ালের বাট ক্রম (১২৩ ও ১২) 'Needle' সারি থেকে ধরা, সুই বসানোর আসল ক্রম আলাদা হতে পারে।" },
+  rib11:{ t:"1×1 রিব",
+    what:"সিলিন্ডার ও ডায়ালের সুই পালা করে বসে। প্রতি ফিডারে সব সুই নিট করে।",
+    how:"কোনো টাক বা মিস নেই, তাই আলাদা নকশা তৈরি হয় না। ফেস ও ব্যাক ওয়েল ১টা করে পালা করে আসে।",
+    look:"সূক্ষ্ম রিব লাইন, সবচেয়ে বেশি আড়াআড়ি স্ট্রেচ।",
+    use:"কাফ, কলার, ফিটেড টি-শার্ট।" },
+  rib22:{ t:"2×2 রিব",
+    what:"সিলিন্ডারে ২টা, ডায়ালে ২টা, এভাবে সুই বসে (বিন্যাস CCDD)।",
+    how:"ক্যাম সব নিট, ঠিক 1×1-এর মতো। পার্থক্য আসে শুধু সুই বসানোর ধরন থেকে।",
+    look:"মোটা, স্পষ্ট রিব লাইন, ভালো রিকভারি।",
+    use:"কাফ, কলার, ফিটেড পোশাক।" },
+  interlock:{ t:"ইন্টারলক",
+    what:"প্রতি অবস্থানে সিলিন্ডার ও ডায়ালের সুই মুখোমুখি (বিন্যাস B)। বাট ১ ও ২ পালা করে বসে।",
+    how:"ফিডার ১ শুধু বাট-১ সুই নিট করায়, ফিডার ২ বাট-২ সুই। দুই ফিডার মিলে ১টা পূর্ণ কোর্স হয়।",
+    look:"দুই পাশই মসৃণ ও ঘন। ফিডারে আলাদা রঙ দিলে খাড়া ডোরা দেখা যাবে।",
+    use:"টি-শার্ট, আন্ডারগার্মেন্টস, বেবি ওয়্যার।" },
+  pique:{ t:"পিকে",
+    what:"রিব বিন্যাসে সিলিন্ডারের সুই বাট ১, ২ পালা করে বসে। ডায়াল সব সময় নিট।",
+    how:"৪ ফিডারে সিলিন্ডারের বাট-১ ও বাট-২ পালা করে টাক ও মিস করে। এতে সামনে উঁচু-নিচু কোষ তৈরি হয়।",
+    look:"সামনে ছোট হীরা বা মৌচাকের মতো টেক্সচার, পেছনে মসৃণ।",
+    use:"পোলো শার্ট, স্পোর্টস ওয়্যার।" },
+  waffle:{ t:"ওয়াফল",
+    what:"রিব বিন্যাসে দুই দিকেই বাট ১, ২। এক সেট যখন নিট করে, অন্য সেট তখন টাক করে।",
+    how:"৪ ফিডারের রিপিটে বাট-১ সুই ২ কোর্স নিট করে, তারপর ২ কোর্স টাক। বাট-২ ঠিক উল্টো। দুই সেটের লুপের উচ্চতা আলাদা হয়ে ঘরের মতো কোষ তৈরি হয়।",
+    look:"দুই পাশেই চেকার বা মৌচাকের মতো উঁচু-নিচু টেক্সচার। ফেব্রিক মোটা ও ভারী।",
+    use:"সোয়েটার টাইপ ফেব্রিক, শীতের পোশাক।" },
+  tuck:{ t:"টাক ডিজাইন (র‍্যাপ্লে টাইপ)",
+    what:"1×1 রিব বিন্যাস। সিলিন্ডার সব সময় নিট, শুধু ডায়ালের বাট-১ ও বাট-২ পালা করে টাক করে।",
+    how:"৪ ফিডারের মধ্যে ফিডার ২-এ ডায়াল ২ টাক করে, ফিডার ৪-এ ডায়াল ১। টাক করা সুই লুপ ধরে রাখে, পরের কোর্সে দুই লুপ একসাথে নিট হয়।",
+    look:"সামনের দিক প্রায় সাধারণ রিবের মতো, পেছনে ছোট ছোট উঁচু ফোঁটার টেক্সচার।",
+    use:"টেক্সচারড টি-শার্ট, হালকা সোয়েটার।" },
+  cardigan:{ t:"ফুল কার্ডিগান",
+    what:"1×1 রিব বিন্যাস। প্রতিটি সুই এক কোর্সে নিট করে, পরের কোর্সে টাক।",
+    how:"ফিডার ১-এ সিলিন্ডার নিট ও ডায়াল টাক, ফিডার ২-এ উল্টো। দুই কোর্স মিলে প্রতি সুই ১টা লম্বা লুপ তৈরি করে।",
+    look:"দুই পাশ একই রকম, মোটা, ঘন ও স্থিতিশীল। রিবের চেয়ে কম স্ট্রেচ।",
+    use:"কার্ডিগান, জ্যাকেট, ভারী ফেব্রিক।" },
+  custom:{ t:"নিজের ডিজাইন",
+    what:"এখানে আপনি নিজে ক্যাম বসিয়ে ডিজাইন বানাচ্ছেন।",
+    how:"ক্যামের ঘরে চাপ দিলে ∧ (নিট), ∨ (টাক), — (মিস) ঘুরবে। সুই বিন্যাস ও বাট বদলে নিডল সেটআপও বদলানো যায়।",
+    look:"নিচের 'ফেব্রিক' অংশে ফল দেখুন। বক্স দিয়ে ঘেরা অংশটা একটা রিপিট।",
+    use:"" }
+};
+
+var S = { preset:"sheet", F:18, rounds:2, wales:36, layout:"CD", cylButt:"123", dialButt:"12",
+          view:"face", cams:[], mirror:true, upto:36, zoom:1 };
+var timer = null;
+
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+function totalCourses(){ return S.F * S.rounds; }
+function resetUpto(){ stopPlay(); S.upto = totalCourses(); }
+
+function loadPreset(name){
+  var p = PRESETS[name]; if(!p) return;
+  S.preset = name;
+  S.F = p.F; S.layout = p.layout; S.cylButt = p.cyl; S.dialButt = p.dial; S.mirror = p.mirror; S.wales = p.wales;
+  S.cams = p.cams.map(function(c,i){
+    return { d1:c[0], d2:c[1], c1:c[2], c2:c[3], c3:c[4],
+             color: p.colors ? p.colors[i] : BASE, label: p.labels ? p.labels[i] : "" };
+  });
+  S.rounds = Math.max(2, Math.round(28 / S.F));
+  resetUpto();
+}
+
+function setFeeders(n){
+  n = clamp(n,1,18);
+  while(S.cams.length < n){
+    var l = S.cams[S.cams.length-1] || {d1:"K",d2:"K",c1:"K",c2:"K",c3:"K",color:BASE,label:""};
+    S.cams.push({d1:l.d1,d2:l.d2,c1:l.c1,c2:l.c2,c3:l.c3,color:l.color,label:""});
+  }
+  S.cams.length = n; S.F = n;
+}
+
+/* --- Needle model --- */
+function build(){
+  var out = [], ci = 0, di = 0;
+  for(var p=0;p<S.wales;p++){
+    var ch = S.layout.charAt(p % S.layout.length);
+    var o = { p:p, ch:ch, cyl:null, dial:null };
+    if(ch==="C" || ch==="B"){ o.cyl = S.cylButt.charAt(ci % S.cylButt.length); ci++; }
+    if(ch==="D" || ch==="B"){ o.dial = S.dialButt.charAt(di % S.dialButt.length); di++; }
+    out.push(o);
+  }
+  return out;
+}
+function action(cam, bed, butt){
+  return cam[(bed==="cyl" ? "c" : "d") + butt] || "M";
+}
+function presentSets(model){
+  return SETS.filter(function(s){
+    return model.some(function(m){ return m[s.bed]===s.butt; });
+  });
+}
+function repeatWidth(model){
+  var L = S.layout.length;
+  for(var w=L; w<=model.length; w+=L){
+    var ok = true;
+    for(var p=0;p+w<model.length;p++){
+      var a = model[p], b = model[p+w];
+      if(a.ch!==b.ch || a.cyl!==b.cyl || a.dial!==b.dial){ ok = false; break; }
+    }
+    if(ok) return w;
+  }
+  return 0;
+}
+
+/* --- Drawing --- */
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function shade(hex, amt){
+  var n = parseInt(hex.slice(1),16);
+  var r = clamp(((n>>16)&255)+amt,0,255), g = clamp(((n>>8)&255)+amt,0,255), b = clamp((n&255)+amt,0,255);
+  return "rgb("+r+","+g+","+b+")";
+}
+function drawLoop(ctx,x,y,w,h,color,type){
+  var lw = Math.max(2.4, w*0.3);
+  ctx.lineCap = "round"; ctx.lineJoin = "round";
+  function V(top,bot,col,width){
+    ctx.strokeStyle = col; ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo(x+w*0.2, y+top); ctx.lineTo(x+w*0.5, y+bot); ctx.lineTo(x+w*0.8, y+top);
+    ctx.stroke();
+  }
+  if(type==="K"){
+    V(h*0.14, h*0.86, shade(color,-55), lw+1.4);
+    V(h*0.14, h*0.86, color, lw);
+  } else if(type==="T"){
+    V(h*0.5, h*0.88, shade(color,-55), lw*0.8+1.2);
+    V(h*0.5, h*0.88, color, lw*0.8);
+    ctx.strokeStyle = shade(color,-55); ctx.lineWidth = lw*0.55+1.2;
+    ctx.beginPath(); ctx.moveTo(x+w*0.14,y+h*0.26); ctx.lineTo(x+w*0.86,y+h*0.26); ctx.stroke();
+    ctx.strokeStyle = color; ctx.lineWidth = lw*0.55;
+    ctx.beginPath(); ctx.moveTo(x+w*0.14,y+h*0.26); ctx.lineTo(x+w*0.86,y+h*0.26); ctx.stroke();
+  } else {
+    ctx.save();
+    ctx.globalAlpha = 0.5; ctx.strokeStyle = color; ctx.lineWidth = 1.4; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(x+1,y+h*0.5); ctx.lineTo(x+w-1,y+h*0.5); ctx.stroke();
+    ctx.restore();
+  }
+}
+function drawCell(ctx,x,y,w,h,color,type){
+  var pad = 1;
+  ctx.fillStyle = cssVar("--m");
+  ctx.fillRect(x+pad,y+pad,w-pad*2,h-pad*2);
+  if(type==="K"){
+    ctx.fillStyle = color; ctx.fillRect(x+pad,y+pad,w-pad*2,h-pad*2);
+  } else if(type==="T"){
+    ctx.fillStyle = color; ctx.fillRect(x+pad,y+pad,w-pad*2,(h-pad*2)*0.45);
+    ctx.globalAlpha = .35; ctx.fillRect(x+pad,y+pad+(h-pad*2)*0.45,w-pad*2,(h-pad*2)*0.55); ctx.globalAlpha = 1;
+  }
+}
+
+function draw(){
+  var cv = $("cv"), ctx = cv.getContext("2d");
+  var model = build();
+  var total = totalCourses();
+  S.upto = clamp(S.upto,1,total);
+  var cols;
+  if(S.view==="face") cols = model.filter(function(m){ return m.cyl; });
+  else if(S.view==="back") cols = model.filter(function(m){ return m.dial; });
+  else cols = model;
+
+  var margin = 30, topPad = 16, wrapW = $("wrap").clientWidth - 16;
+  var n = Math.max(1, cols.length);
+  var base = clamp(Math.floor((wrapW - margin) / n), 11, 28);
+  var cw = Math.round(base * S.zoom);
+  var mapMode = S.view==="map";
+  var chh = mapMode ? Math.round(cw*1.5) : Math.round(cw*0.85);
+  var W = margin + n*cw + 2, H = total*chh + topPad + 4;
+  var dpr = window.devicePixelRatio || 1;
+  cv.width = W*dpr; cv.height = H*dpr; cv.style.width = W+"px"; cv.style.height = H+"px";
+  ctx.setTransform(dpr,0,0,dpr,0,topPad*dpr);
+  ctx.clearRect(0,-topPad,W,H);
+
+  ctx.strokeStyle = cssVar("--grid"); ctx.lineWidth = 1;
+  for(var r=0;r<=total;r++){ var yy = r*chh+0.5; ctx.beginPath(); ctx.moveTo(margin,yy); ctx.lineTo(W,yy); ctx.stroke(); }
+
+  var accent = cssVar("--accent");
+  ctx.font = "10px sans-serif"; ctx.textBaseline = "middle";
+  for(var c=0;c<S.upto;c++){
+    var f = c % S.F, cam = S.cams[f];
+    var y = (total-1-c)*chh;
+    if(S.upto<total && c===S.upto-1){
+      ctx.save(); ctx.globalAlpha = 0.16; ctx.fillStyle = accent; ctx.fillRect(margin,y,W-margin,chh); ctx.restore();
+    }
+    ctx.fillStyle = cssVar("--mute"); ctx.textAlign = "right";
+    ctx.fillText("F"+(f+1), margin-5, y+chh/2);
+    for(var i=0;i<cols.length;i++){
+      var m = cols[i], x = margin + i*cw;
+      if(!mapMode){
+        var type = S.view==="face" ? action(cam,"cyl",m.cyl) : action(cam,"dial",m.dial);
+        drawLoop(ctx,x,y,cw,chh,cam.color,type);
+      } else {
+        var half = chh/2;
+        if(m.dial) drawCell(ctx,x,y,cw,half,cam.color,action(cam,"dial",m.dial));
+        if(m.cyl)  drawCell(ctx,x,y+half,cw,half,cam.color,action(cam,"cyl",m.cyl));
+      }
+    }
+  }
+
+  // one-repeat box
+  var rw = repeatWidth(model);
+  if(rw>0){
+    var k = cols.filter(function(m){ return m.p < rw; }).length;
+    if(k>0){
+      var bx = margin+1, by = (total-S.F)*chh+1, bw = k*cw-2, bh = S.F*chh-2;
+      ctx.save(); ctx.setLineDash([6,4]); ctx.strokeStyle = accent; ctx.lineWidth = 2; ctx.strokeRect(bx,by,bw,bh);
+      ctx.setLineDash([]); ctx.fillStyle = accent; ctx.font = "600 11px sans-serif"; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+      ctx.fillText("১টি রিপিট", bx+2, by-2);
+      ctx.restore();
+    }
+  }
+
+  var hints = {
+    face:"সামনের দিক: শুধু সিলিন্ডার সুইয়ের লুপ। নিচ থেকে উপরে কোর্স বাড়ছে, বাঁ দিকে ফিডার নম্বর। ড্যাশ করা বক্স = ১টা পূর্ণ রিপিট।",
+    back:"পেছনের দিক: শুধু ডায়াল সুইয়ের লুপ। ফাঁকা ঘর মানে ওই সুই মিস করেছে, ডটেড দাগ সুতা ভেসে যাওয়া।",
+    map:"সুই-ম্যাপ: প্রতি কোর্সে উপরের সারি ডায়াল, নিচের সারি সিলিন্ডার। পূর্ণ ঘর = নিট, অর্ধেক = টাক, ফাঁকা = মিস।"
+  };
+  $("viewHint").textContent = hints[S.view];
+  updateNow();
+}
+
+function updateNow(){
+  var total = totalCourses(), c = S.upto-1, f = c % S.F, cam = S.cams[f];
+  var model = build(), sets = presentSets(model);
+  var g = {K:[],T:[],M:[]};
+  sets.forEach(function(s){ g[cam[s.key]].push(s.name); });
+  var parts = [];
+  if(g.K.length) parts.push("নিট: "+g.K.join(", "));
+  if(g.T.length) parts.push("টাক: "+g.T.join(", "));
+  if(g.M.length) parts.push("মিস: "+g.M.join(", "));
+  $("now").textContent = "কোর্স "+S.upto+"/"+total+" · ফিডার "+(f+1)+(cam.label ? " ("+cam.label+")" : "")+" → "+parts.join(" | ");
+  var up = $("upto"); up.max = total; up.value = S.upto;
+}
+
+/* --- Analysis --- */
+function longestRun(seq, val){
+  var k = seq.indexOf("K");
+  if(k<0) return seq.length;
+  var best = 0, cur = 0;
+  for(var i=1;i<=seq.length;i++){
+    var v = seq[(k+i) % seq.length];
+    if(v===val){ cur++; if(cur>best) best=cur; } else { cur=0; }
+  }
+  return best;
+}
+function analyze(){
+  var model = build(), sets = presentSets(model), list = [];
+  sets.forEach(function(s){
+    var seq = S.cams.map(function(c){ return c[s.key]; });
+    if(seq.indexOf("K")<0) list.push(s.name+" সেটের সুই কোনো ফিডারে নিট করে না। ফেব্রিকে ওই ওয়েল তৈরি হবে না।");
+    else {
+      if(longestRun(seq,"T")>=3) list.push(s.name+" সেটে টানা ৩+ টাক। লুপ জমে সুতা ছিঁড়তে পারে।");
+      if(longestRun(seq,"M")>=6) list.push(s.name+" সেটে টানা ৬+ মিস। লম্বা ভাসা সুতা বা ঝুলে পড়া লুপ হতে পারে।");
+    }
+  });
+  var ul = $("warn"); ul.innerHTML = "";
+  var li;
+  if(!list.length){ li = document.createElement("li"); li.className = "ok"; li.textContent = "কোনো সমস্যা ধরা পড়েনি।"; ul.appendChild(li); }
+  else list.forEach(function(t){ li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+  return sets.map(function(s){ return s.key; });
+}
+
+/* --- UI --- */
+function symFor(set, v){ return (set.bed==="dial" && S.mirror) ? SYM_D[v] : SYM[v]; }
+
+function renderLegend(){
+  $("legend").innerHTML = S.mirror
+    ? "<span><b>∧</b>সিলিন্ডারে নিট</span><span><b>∨</b>ডায়ালে নিট</span><span><b>—</b>মিস</span><span>ঘরে চাপ দিলে বদলাবে (নিট, টাক, মিস)</span>"
+    : "<span><b>∧</b>নিট</span><span><b>∨</b>টাক</span><span><b>—</b>মিস</span><span>ঘরে চাপ দিলে বদলাবে</span>";
+}
+
+function renderInfo(){
+  var i = INFO[S.preset] || INFO.custom;
+  $("infoTitle").textContent = i.t;
+  var h = "<p><b>কী:</b> "+i.what+"</p><p><b>কীভাবে ডিজাইন হয়:</b> "+i.how+"</p><p><b>ফেব্রিকে যা দেখবেন:</b> "+i.look+"</p>";
+  if(i.use) h += "<p><b>ব্যবহার:</b> "+i.use+"</p>";
+  if(i.note) h += "<div class=\"note\">"+i.note+"</div>";
+  $("infoBody").innerHTML = h;
+}
+
+function buildTable(){
+  var present = analyze();
+  var body = $("camBody"); body.innerHTML = "";
+  S.cams.forEach(function(cam, i){
+    var tr = document.createElement("tr");
+    var td = document.createElement("td"); td.className = "fd"; td.textContent = i+1; tr.appendChild(td);
+
+    td = document.createElement("td"); td.className = "yn";
+    var ci = document.createElement("input"); ci.type = "color"; ci.value = cam.color; ci.setAttribute("aria-label","ফিডার "+(i+1)+" এর সুতার রঙ");
+    ci.addEventListener("input", function(){ cam.color = ci.value; draw(); });
+    td.appendChild(ci);
+    if(cam.label){ var lb = document.createElement("span"); lb.className = "lb"; lb.textContent = cam.label; td.appendChild(lb); }
+    tr.appendChild(td);
+
+    SETS.forEach(function(s){
+      var cell = document.createElement("td");
+      var b = document.createElement("button"); b.className = "cam"; b.dataset.v = cam[s.key]; b.textContent = symFor(s,cam[s.key]);
+      b.setAttribute("aria-label","ফিডার "+(i+1)+" "+s.name);
+      if(present.indexOf(s.key)<0) b.classList.add("off");
+      b.addEventListener("click", function(){
+        cam[s.key] = NEXT[cam[s.key]]; b.dataset.v = cam[s.key]; b.textContent = symFor(s,cam[s.key]);
+        markCustom(); analyze(); draw();
+      });
+      cell.appendChild(b); tr.appendChild(cell);
+    });
+    body.appendChild(tr);
+  });
+  SETS.forEach(function(s){ $(s.head).classList.toggle("off", present.indexOf(s.key)<0); });
+}
+
+function markCustom(){
+  if(S.preset!=="custom"){ S.preset = "custom"; $("preset").value = "custom"; renderInfo(); }
+}
+
+function syncControls(){
+  $("fVal").textContent = S.F; $("rVal").textContent = S.rounds; $("wVal").textContent = S.wales;
+  $("layout").value = S.layout; $("cylButt").value = S.cylButt; $("dialButt").value = S.dialButt;
+  $("mirror").checked = S.mirror; $("preset").value = S.preset;
+}
+
+function refresh(full){
+  syncControls(); renderLegend();
+  if(full) buildTable(); else analyze();
+  draw();
+}
+
+function sanitize(v, allowed, fallback){
+  v = (v||"").toUpperCase().split("").filter(function(c){ return allowed.indexOf(c)>=0; }).join("");
+  return v || fallback;
+}
+
+/* --- Play --- */
+function stopPlay(){
+  if(timer){ clearInterval(timer); timer = null; }
+  var b = $("play"); if(b) b.textContent = "▶ ধাপে ধাপে";
+}
+function startPlay(){
+  if(S.upto >= totalCourses()) S.upto = 1;
+  $("play").textContent = "⏸ থামান";
+  draw();
+  timer = setInterval(function(){
+    if(S.upto >= totalCourses()){ stopPlay(); return; }
+    S.upto++; draw();
+    if(S.upto >= totalCourses()) stopPlay();
+  }, 320);
+}
+
+$("play").addEventListener("click", function(){ if(timer) stopPlay(); else startPlay(); });
+$("upto").addEventListener("input", function(){ stopPlay(); S.upto = parseInt(this.value,10); draw(); });
+$("zoom").addEventListener("change", function(){ S.zoom = parseFloat(this.value); draw(); });
+
+$("preset").addEventListener("change", function(){
+  var v = this.value;
+  if(v==="custom"){ S.preset = "custom"; renderInfo(); return; }
+  loadPreset(v); renderInfo(); refresh(true);
+});
+$("fMinus").addEventListener("click", function(){ setFeeders(S.F-1); markCustom(); resetUpto(); refresh(true); });
+$("fPlus").addEventListener("click", function(){ setFeeders(S.F+1); markCustom(); resetUpto(); refresh(true); });
+$("rMinus").addEventListener("click", function(){ S.rounds = clamp(S.rounds-1,1,20); resetUpto(); refresh(false); });
+$("rPlus").addEventListener("click", function(){ S.rounds = clamp(S.rounds+1,1,20); resetUpto(); refresh(false); });
+$("wMinus").addEventListener("click", function(){ S.wales = clamp(S.wales-2,8,60); refresh(false); });
+$("wPlus").addEventListener("click", function(){ S.wales = clamp(S.wales+2,8,60); refresh(false); });
+$("layout").addEventListener("change", function(){ S.layout = sanitize(this.value,"CDB","CD"); markCustom(); refresh(true); });
+$("cylButt").addEventListener("change", function(){ S.cylButt = sanitize(this.value,"123","1"); markCustom(); refresh(true); });
+$("dialButt").addEventListener("change", function(){ S.dialButt = sanitize(this.value,"12","1"); markCustom(); refresh(true); });
+$("mirror").addEventListener("change", function(){ S.mirror = this.checked; refresh(true); });
+$("sameColor").addEventListener("click", function(){
+  var c = S.cams[0].color; S.cams.forEach(function(x){ x.color = c; }); refresh(true);
+});
+$("stripeColor").addEventListener("click", function(){
+  S.cams.forEach(function(x,i){ x.color = PALETTE[i % PALETTE.length]; }); refresh(true);
+});
+Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(t){
+  t.addEventListener("click", function(){
+    S.view = t.dataset.view;
+    Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(o){ o.setAttribute("aria-pressed", o===t ? "true" : "false"); });
+    draw();
+  });
+});
+
+var rt; window.addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(draw, 120); });
+if(window.matchMedia){
+  var mq = window.matchMedia("(prefers-color-scheme: dark)");
+  if(mq.addEventListener) mq.addEventListener("change", draw);
+}
+new MutationObserver(draw).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+
+loadPreset("sheet");
+renderInfo();
+refresh(true);
+})();
+</script>
+</body>
+</html>
