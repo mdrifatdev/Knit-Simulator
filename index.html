@@ -962,7 +962,13 @@ kbd {
           </div>
           <div class="stat" id="now"></div>
           <div class="tools">
-            <span class="flbl" style="margin:0;white-space:nowrap">জুম:</span>
+            <span class="flbl" style="margin:0;white-space:nowrap">স্টাইল:</span>
+            <select class="ssm" id="renderStyle">
+              <option value="realistic" selected>🧶 বাস্তবসম্মত ৩ডি</option>
+              <option value="cad">📐 টেকনিক্যাল সিএডি</option>
+              <option value="shadow">✨ শ্যাডো স্টিচ</option>
+            </select>
+            <span class="flbl" style="margin:0 0 0 6px;white-space:nowrap">জুম:</span>
             <select class="ssm" id="zoom">
               <option value="1">১০০% সাধারণ</option>
               <option value="1.5">১৫০% বড়</option>
@@ -1082,7 +1088,7 @@ var INFO={
 };
 
 var S={preset:"sheet",F:18,rounds:2,wales:36,layout:"CD",cylButt:"123",dialButt:"12",
-  view:"face",cams:[],mirror:true,upto:36,zoom:1,speed:260,sound:true};
+  view:"face",cams:[],mirror:true,upto:36,zoom:1,speed:260,sound:true,renderStyle:"realistic"};
 var timer=null,audioCtx=null;
 
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
@@ -1166,25 +1172,152 @@ function shade(hex,amt){
 }
 
 function drawLoop(ctx,x,y,w,h,color,type){
-  var lw=Math.max(2.4,w*0.3);
-  ctx.lineCap="round";ctx.lineJoin="round";
-  function V(top,bot,col,width){
-    ctx.strokeStyle=col;ctx.lineWidth=width;ctx.beginPath();
-    ctx.moveTo(x+w*.2,y+top);ctx.lineTo(x+w*.5,y+bot);ctx.lineTo(x+w*.8,y+top);ctx.stroke();
-  }
-  if(type==="K"){
-    V(h*.14,h*.86,shade(color,-55),lw+1.4);
-    V(h*.14,h*.86,color,lw);
-  } else if(type==="T"){
-    V(h*.5,h*.88,shade(color,-55),lw*.8+1.2);
-    V(h*.5,h*.88,color,lw*.8);
-    ctx.strokeStyle=shade(color,-55);ctx.lineWidth=lw*.55+1.2;
-    ctx.beginPath();ctx.moveTo(x+w*.14,y+h*.26);ctx.lineTo(x+w*.86,y+h*.26);ctx.stroke();
-    ctx.strokeStyle=color;ctx.lineWidth=lw*.55;
-    ctx.beginPath();ctx.moveTo(x+w*.14,y+h*.26);ctx.lineTo(x+w*.86,y+h*.26);ctx.stroke();
+  var style = S.renderStyle || "realistic";
+  var lw = Math.max(2.8, w * 0.28);
+  ctx.lineCap = "round"; ctx.lineJoin = "round";
+
+  if (style === "realistic") {
+    if(type === "K"){
+      // Realistic curved Bézier knit stitch
+      function pathLoop(){
+        ctx.beginPath();
+        ctx.moveTo(x - w*0.04, y + h*0.88);
+        ctx.quadraticCurveTo(x + w*0.14, y + h*0.96, x + w*0.22, y + h*0.82);
+        ctx.bezierCurveTo(x + w*0.30, y + h*0.50, x + w*0.22, y + h*0.14, x + w*0.50, y + h*0.12);
+        ctx.bezierCurveTo(x + w*0.78, y + h*0.14, x + w*0.70, y + h*0.50, x + w*0.78, y + h*0.82);
+        ctx.quadraticCurveTo(x + w*0.86, y + h*0.96, x + w*1.04, y + h*0.88);
+      }
+      // 1. Ambient depth drop shadow
+      ctx.save();
+      ctx.strokeStyle = "rgba(0,0,0,0.22)";
+      ctx.lineWidth = lw + 2.6;
+      pathLoop();
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. Base yarn tube (dark contour rim)
+      ctx.strokeStyle = shade(color, -45);
+      ctx.lineWidth = lw + 1.2;
+      pathLoop();
+      ctx.stroke();
+
+      // 3. Core yarn body (vibrant base color)
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lw;
+      pathLoop();
+      ctx.stroke();
+
+      // 4. Specular yarn 3D highlight (glossy tubular ridge)
+      ctx.strokeStyle = shade(color, +70);
+      ctx.lineWidth = Math.max(0.9, lw * 0.32);
+      ctx.globalAlpha = 0.75;
+      pathLoop();
+      ctx.stroke();
+      ctx.globalAlpha = 1.0;
+
+    } else if(type === "T"){
+      // Realistic Tuck stitch: Held loop + Accumulated double tuck yarn bridge
+      function pathTuckHeld(){
+        ctx.beginPath();
+        ctx.moveTo(x + w*0.20, y + h*0.90);
+        ctx.bezierCurveTo(x + w*0.26, y + h*0.58, x + w*0.24, y + h*0.28, x + w*0.50, y + h*0.24);
+        ctx.bezierCurveTo(x + w*0.76, y + h*0.28, x + w*0.74, y + h*0.58, x + w*0.80, y + h*0.90);
+      }
+      function pathTuckBar(){
+        ctx.beginPath();
+        ctx.moveTo(x + w*0.06, y + h*0.38);
+        ctx.quadraticCurveTo(x + w*0.50, y + h*0.46, x + w*0.94, y + h*0.38);
+      }
+
+      // Held loop
+      ctx.strokeStyle = shade(color, -40);
+      ctx.lineWidth = lw * 0.88 + 1.4;
+      pathTuckHeld(); ctx.stroke();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lw * 0.88;
+      pathTuckHeld(); ctx.stroke();
+
+      // Tuck accumulated cross bar with drop shadow
+      ctx.save();
+      ctx.strokeStyle = "rgba(0,0,0,0.25)";
+      ctx.lineWidth = lw + 2.4;
+      pathTuckBar(); ctx.stroke();
+      ctx.restore();
+
+      ctx.strokeStyle = shade(color, -35);
+      ctx.lineWidth = lw + 1.2;
+      pathTuckBar(); ctx.stroke();
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lw;
+      pathTuckBar(); ctx.stroke();
+
+      // Specular highlight on tuck bar
+      ctx.strokeStyle = shade(color, +70);
+      ctx.lineWidth = Math.max(1.0, lw * 0.30);
+      ctx.globalAlpha = 0.80;
+      pathTuckBar(); ctx.stroke();
+      ctx.globalAlpha = 1.0;
+
+    } else {
+      // Realistic Miss stitch: Catenary floating strand behind needle
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = Math.max(1.5, lw * 0.45);
+      ctx.globalAlpha = 0.45;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(x + 1, y + h*0.50);
+      ctx.quadraticCurveTo(x + w*0.50, y + h*0.56, x + w - 1, y + h*0.50);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+  } else if (style === "shadow") {
+    // Shadow Stitch Mode
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.30)";
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetY = 2;
+
+    function V(top,bot,col,width){
+      ctx.strokeStyle=col;ctx.lineWidth=width;ctx.beginPath();
+      ctx.moveTo(x+w*.2,y+top);ctx.lineTo(x+w*.5,y+bot);ctx.lineTo(x+w*.8,y+top);ctx.stroke();
+    }
+    if(type==="K"){
+      V(h*.14,h*.86,shade(color,-40),lw+1.4);
+      V(h*.14,h*.86,color,lw);
+    } else if(type==="T"){
+      V(h*.5,h*.88,shade(color,-40),lw*.8+1.2);
+      V(h*.5,h*.88,color,lw*.8);
+      ctx.strokeStyle=color;ctx.lineWidth=lw*.65;
+      ctx.beginPath();ctx.moveTo(x+w*.12,y+h*.28);ctx.lineTo(x+w*.88,y+h*.28);ctx.stroke();
+    } else {
+      ctx.globalAlpha=0.4;ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.setLineDash([3,3]);
+      ctx.beginPath();ctx.moveTo(x+1,y+h*.5);ctx.lineTo(x+w-1,y+h*.5);ctx.stroke();
+    }
+    ctx.restore();
+
   } else {
-    ctx.save();ctx.globalAlpha=0.4;ctx.strokeStyle=color;ctx.lineWidth=1.2;ctx.setLineDash([3,3]);
-    ctx.beginPath();ctx.moveTo(x+1,y+h*.5);ctx.lineTo(x+w-1,y+h*.5);ctx.stroke();ctx.restore();
+    // Technical CAD Mode
+    function V(top,bot,col,width){
+      ctx.strokeStyle=col;ctx.lineWidth=width;ctx.beginPath();
+      ctx.moveTo(x+w*.2,y+top);ctx.lineTo(x+w*.5,y+bot);ctx.lineTo(x+w*.8,y+top);ctx.stroke();
+    }
+    if(type==="K"){
+      V(h*.14,h*.86,shade(color,-55),lw+1.4);
+      V(h*.14,h*.86,color,lw);
+    } else if(type==="T"){
+      V(h*.5,h*.88,shade(color,-55),lw*.8+1.2);
+      V(h*.5,h*.88,color,lw*.8);
+      ctx.strokeStyle=shade(color,-55);ctx.lineWidth=lw*.55+1.2;
+      ctx.beginPath();ctx.moveTo(x+w*.14,y+h*.26);ctx.lineTo(x+w*.86,y+h*.26);ctx.stroke();
+      ctx.strokeStyle=color;ctx.lineWidth=lw*.55;
+      ctx.beginPath();ctx.moveTo(x+w*.14,y+h*.26);ctx.lineTo(x+w*.86,y+h*.26);ctx.stroke();
+    } else {
+      ctx.save();ctx.globalAlpha=0.4;ctx.strokeStyle=color;ctx.lineWidth=1.2;ctx.setLineDash([3,3]);
+      ctx.beginPath();ctx.moveTo(x+1,y+h*.5);ctx.lineTo(x+w-1,y+h*.5);ctx.stroke();ctx.restore();
+    }
   }
 }
 
@@ -1530,6 +1663,7 @@ function selectView(v){
 $("exportBtn").addEventListener("click",exportPNG);
 $("upto").addEventListener("input",function(){stopPlay();S.upto=parseInt(this.value,10);draw();});
 $("zoom").addEventListener("change",function(){S.zoom=parseFloat(this.value);draw();});
+$("renderStyle").addEventListener("change",function(){S.renderStyle=this.value;draw();showToast("স্টাইল: "+this.options[this.selectedIndex].text);});
 $("speed").addEventListener("change",function(){S.speed=parseInt(this.value,10);if(timer){stopPlay();startPlay();}});
 $("preset").addEventListener("change",function(){var v=this.value;if(v==="custom"){S.preset="custom";renderInfo();return;}loadPreset(v);renderInfo();refresh(true);});
 $("fMinus").addEventListener("click",function(){setFeeders(S.F-1);markCustom();resetUpto();refresh(true);});
