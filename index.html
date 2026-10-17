@@ -3,252 +3,744 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="KnitSim - ইন্টারেক্টিভ সার্কুলার নিটিং ক্যাম সিমুলেটর">
+<meta name="description" content="KnitSim - ইন্টারেক্টিভ সার্কুলার নিটিং ক্যাম সিমুলেটর ও টেক্সটাইল সিএডি ওয়ার্কবেঞ্চ">
 <title>KnitSim - নিটিং ক্যাম সিমুলেটর</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='4' y1='2' x2='28' y2='30'%3E%3Cstop stop-color='%23818cf8'/%3E%3Cstop offset='1' stop-color='%2338bdf8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='16' cy='16' r='14' fill='%231e1b4b' stroke='url(%23g)' stroke-width='2'/%3E%3Cpath d='M9 8C9 4.8 11.8 3.5 14 5.5L16 8L18 5.5C20.2 3.5 23 4.8 23 8C23 12 18.5 17.5 16 20.5C13.5 17.5 9 12 9 8Z' fill='none' stroke='url(%23g)' stroke-width='2.2' stroke-linejoin='round'/%3E%3Ccircle cx='16' cy='13.5' r='2' fill='%23fff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
 <style>
-:root{
-  --bg:#f1f4f9;--surface:#fff;--surface2:#f8fafd;--surface3:#eef1f7;
-  --border:#e0e5ef;--text:#111827;--text2:#374151;--text3:#6b7280;--text4:#9ca3af;
-  --brand:#4338ca;--brand-h:#3730a3;--brand-l:#6366f1;--brand-ll:#a5b4fc;
-  --brand-bg:#eef2ff;--brand-fg:#fff;
-  --knit-bg:#dbeafe;--knit-bd:#93c5fd;--knit-t:#1d4ed8;
-  --tuck-bg:#fef3c7;--tuck-bd:#fcd34d;--tuck-t:#92400e;
-  --miss-bg:#f3f4f6;--miss-bd:#d1d5db;--miss-t:#6b7280;
-  --ok-bg:#d1fae5;--ok-bd:#6ee7b7;--ok-t:#065f46;
-  --warn-bg:#fff7ed;--warn-bd:#fdba74;--warn-t:#9a3412;
-  --nav-bg:#1e1b4b;--nav-bd:rgba(255,255,255,.08);--nav-mute:rgba(255,255,255,.45);
-  --shsm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
-  --shmd:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.05);
-  --r:8px;--rlg:14px;--dur:.15s;--ease:cubic-bezier(.4,0,.2,1);
+:root {
+  --bg: #f3f6fa;
+  --surface: #ffffff;
+  --surface2: #f8fafc;
+  --surface3: #edf2f7;
+  --border: #e2e8f0;
+  --border-focus: #818cf8;
+  --text: #0f172a;
+  --text2: #334155;
+  --text3: #64748b;
+  --text4: #94a3b8;
+  --brand: #4f46e5;
+  --brand-h: #4338ca;
+  --brand-l: #6366f1;
+  --brand-ll: #a5b4fc;
+  --brand-bg: #eef2ff;
+  --brand-fg: #ffffff;
+  --knit-bg: #dbeafe;
+  --knit-bd: #93c5fd;
+  --knit-t: #1d4ed8;
+  --tuck-bg: #fef3c7;
+  --tuck-bd: #fcd34d;
+  --tuck-t: #92400e;
+  --miss-bg: #f1f5f9;
+  --miss-bd: #cbd5e1;
+  --miss-t: #64748b;
+  --ok-bg: #dcfce7;
+  --ok-bd: #86efac;
+  --ok-t: #15803d;
+  --warn-bg: #fff7ed;
+  --warn-bd: #fdba74;
+  --warn-t: #c2410c;
+  --nav-bg: #111428;
+  --nav-bd: rgba(255,255,255,0.08);
+  --nav-mute: rgba(255,255,255,0.55);
+  --shsm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shmd: 0 4px 8px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.06);
+  --shlg: 0 10px 25px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.08);
+  --r: 8px;
+  --rlg: 14px;
+  --dur: 0.16s;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
-[data-theme="dark"]{
-  --bg:#0a0d14;--surface:#111827;--surface2:#1a2232;--surface3:#1f2d40;
-  --border:#1e2d42;--text:#f0f4ff;--text2:#c9d4f0;--text3:#7b8db0;--text4:#4a5b78;
-  --brand:#818cf8;--brand-h:#6366f1;--brand-l:#a5b4fc;--brand-ll:#c7d2fe;
-  --brand-bg:#1e1b4b;--brand-fg:#0a0d14;
-  --knit-bg:#1e3a5f;--knit-bd:#2563eb;--knit-t:#93c5fd;
-  --tuck-bg:#451a03;--tuck-bd:#d97706;--tuck-t:#fcd34d;
-  --miss-bg:#1f2937;--miss-bd:#374151;--miss-t:#6b7280;
-  --ok-bg:#064e3b;--ok-bd:#059669;--ok-t:#6ee7b7;
-  --warn-bg:#431407;--warn-bd:#c2410c;--warn-t:#fdba74;
-  --nav-bg:#0f0c29;
-  --shsm:0 1px 3px rgba(0,0,0,.35),0 1px 2px rgba(0,0,0,.25);
-  --shmd:0 4px 6px rgba(0,0,0,.3),0 2px 4px rgba(0,0,0,.2);
+
+[data-theme="dark"] {
+  --bg: #090c15;
+  --surface: #111726;
+  --surface2: #172033;
+  --surface3: #1d2a42;
+  --border: #1e2c45;
+  --border-focus: #818cf8;
+  --text: #f1f5f9;
+  --text2: #cbd5e1;
+  --text3: #7d8fa9;
+  --text4: #475569;
+  --brand: #818cf8;
+  --brand-h: #6366f1;
+  --brand-l: #a5b4fc;
+  --brand-ll: #c7d2fe;
+  --brand-bg: rgba(99,102,241,0.15);
+  --brand-fg: #0a0d14;
+  --knit-bg: #1e3a5f;
+  --knit-bd: #2563eb;
+  --knit-t: #93c5fd;
+  --tuck-bg: #451a03;
+  --tuck-bd: #d97706;
+  --tuck-t: #fcd34d;
+  --miss-bg: #1e293b;
+  --miss-bd: #334155;
+  --miss-t: #64748b;
+  --ok-bg: #064e3b;
+  --ok-bd: #059669;
+  --ok-t: #6ee7b7;
+  --warn-bg: #431407;
+  --warn-bd: #c2410c;
+  --warn-t: #fdba74;
+  --nav-bg: #0b0e1b;
+  --shsm: 0 1px 3px rgba(0,0,0,0.4);
+  --shmd: 0 4px 8px rgba(0,0,0,0.45);
+  --shlg: 0 10px 25px rgba(0,0,0,0.55);
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{height:100%;scroll-behavior:smooth}
-body{font-family:"Hind Siliguri","Noto Sans Bengali","Inter",system-ui,sans-serif;
-  font-size:14px;line-height:1.6;color:var(--text);background:var(--bg);
-  min-height:100vh;display:flex;flex-direction:column;
-  transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
-button{font:inherit;cursor:pointer;border:0;background:none}
-input,select{font:inherit}
-:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
 
-/* NAV */
-.nav{background:var(--nav-bg);border-bottom:1px solid var(--nav-bd);
-  position:sticky;top:0;z-index:100;box-shadow:var(--shmd)}
-.nav-i{max-width:1200px;margin:0 auto;padding:0 20px;height:56px;
-  display:flex;align-items:center;gap:16px}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
-.logo-ic{width:36px;height:36px;background:linear-gradient(135deg,rgba(99,102,241,.22),rgba(168,85,247,.28));
-  border:1.5px solid rgba(129,140,248,.4);border-radius:10px;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 10px rgba(99,102,241,.3);transition:transform var(--dur),box-shadow var(--dur)}
-.logo:hover .logo-ic{transform:scale(1.08);box-shadow:0 4px 14px rgba(99,102,241,.45)}
-.logo-nm{font-weight:700;font-size:16px;color:#fff;letter-spacing:-.3px}
-.logo-sub{font-size:10px;color:var(--nav-mute);letter-spacing:.3px;text-transform:uppercase}
-.nav-sp{flex:1}
-.nav-badge{background:rgba(99,102,241,.2);color:var(--brand-ll);
-  border:1px solid rgba(99,102,241,.3);border-radius:9999px;
-  padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:.3px}
-.nav-btn{width:36px;height:36px;border-radius:var(--r);border:1px solid var(--nav-bd);
-  background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);font-size:16px;
-  display:flex;align-items:center;justify-content:center;
-  transition:background var(--dur),transform var(--dur)}
-.nav-btn:hover{background:rgba(255,255,255,.2);transform:scale(1.05)}
-.nav-btn:active{transform:scale(.94)}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; scroll-behavior: smooth; }
+body {
+  font-family: "Hind Siliguri", "Noto Sans Bengali", "Inter", system-ui, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+button { font: inherit; cursor: pointer; border: 0; background: none; }
+input, select { font: inherit; }
+:focus-visible { outline: 2px solid var(--brand-l); outline-offset: 2px; border-radius: 4px; }
 
-/* LAYOUT */
-.wrap{max-width:1200px;margin:0 auto;width:100%;padding:24px 20px 56px;flex:1}
-.hero{margin-bottom:22px}
-.hero h1{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.4px;margin-bottom:4px}
-.hero p{color:var(--text3);font-size:13.5px}
-.two{display:grid;grid-template-columns:330px 1fr;gap:18px;align-items:start}
-.lc,.rc{display:flex;flex-direction:column;gap:16px}
+/* ── Top Navigation ────────────────────────────────── */
+.nav {
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--nav-bd);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shmd);
+}
+.nav-i {
+  max-width: 1540px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.logo-ic {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.22), rgba(168,85,247,0.28));
+  border: 1.5px solid rgba(129,140,248,0.4);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(99,102,241,0.3);
+  transition: transform var(--dur), box-shadow var(--dur);
+}
+.logo:hover .logo-ic { transform: scale(1.08); box-shadow: 0 4px 14px rgba(99,102,241,0.45); }
+.logo-nm { font-weight: 700; font-size: 16px; color: #fff; letter-spacing: -0.3px; line-height: 1.1; }
+.logo-sub { font-size: 9.5px; color: var(--nav-mute); letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
+.nav-sp { flex: 1; }
+.nav-badge {
+  background: rgba(99,102,241,0.2);
+  color: var(--brand-ll);
+  border: 1px solid rgba(99,102,241,0.35);
+  border-radius: 9999px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.nav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r);
+  border: 1px solid var(--nav-bd);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.85);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--dur), transform var(--dur), border-color var(--dur);
+}
+.nav-btn:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.3); transform: translateY(-1px); }
+.nav-btn:active { transform: scale(0.94); }
+.nav-btn.active { background: var(--brand); color: #fff; border-color: var(--brand-l); }
 
-/* CARDS */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);
-  box-shadow:var(--shsm);transition:box-shadow var(--dur);overflow:hidden}
-.card:hover{box-shadow:var(--shmd)}
-.ch{padding:13px 18px 11px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:10px}
-.cstep{width:24px;height:24px;border-radius:9999px;background:var(--brand);
-  color:var(--brand-fg);font-size:11px;font-weight:700;display:flex;
-  align-items:center;justify-content:center;flex-shrink:0}
-.ctitle{font-size:12px;font-weight:700;color:var(--text2);
-  text-transform:uppercase;letter-spacing:.7px}
-.cb{padding:16px 18px}
+/* ── Workbench Layout ──────────────────────────────── */
+.wrap {
+  max-width: 1540px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 20px 20px 48px;
+  flex: 1;
+}
+.hero {
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.hero h1 { font-size: 21px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
+.hero p { color: var(--text3); font-size: 13px; }
+.hero-badges { display: flex; gap: 8px; align-items: center; }
+.h-pill {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text3);
+}
 
-/* FIELDS */
-.fl{display:flex;flex-direction:column;gap:5px}
-.flbl{font-size:11px;font-weight:600;color:var(--text3);
-  text-transform:uppercase;letter-spacing:.6px}
-.frow{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
-select,input[type=text]{color:var(--text);background:var(--surface2);
-  border:1.5px solid var(--border);border-radius:var(--r);
-  padding:8px 12px;height:38px;font-size:13.5px;
-  transition:border-color var(--dur),box-shadow var(--dur);outline:none;width:100%}
-select:focus,input[type=text]:focus{border-color:var(--brand);
-  box-shadow:0 0 0 3px rgba(99,102,241,.14);background:var(--surface)}
-input[type=text]{width:84px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+/* 3-Column CAD Grid */
+.workbench {
+  display: grid;
+  grid-template-columns: 290px minmax(430px, 1fr) minmax(440px, 1.15fr);
+  gap: 18px;
+  align-items: start;
+}
+.wb-col { display: flex; flex-direction: column; gap: 16px; }
 
-/* STEPPER */
-.stp{display:flex;align-items:center;border:1.5px solid var(--border);
-  border-radius:var(--r);overflow:hidden;background:var(--surface2);height:38px}
-.stp button{width:36px;height:100%;background:transparent;color:var(--text2);
-  font-size:18px;transition:background var(--dur),color var(--dur);
-  border-right:1px solid var(--border)}
-.stp button:last-child{border-right:0;border-left:1px solid var(--border)}
-.stp button:hover{background:var(--brand);color:#fff}
-.stp span{flex:1;text-align:center;font-weight:700;font-size:14px;color:var(--text);min-width:30px}
+/* Sticky Workbench Preview */
+@media (min-width: 1100px) {
+  .wb-sticky {
+    position: sticky;
+    top: 72px;
+    max-height: calc(100vh - 88px);
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
 
-/* TOGGLE */
-.toggle{display:flex;align-items:center;gap:8px;padding:8px 10px;
-  border:1.5px solid var(--border);border-radius:var(--r);background:var(--surface2);
-  cursor:pointer;font-size:13px;color:var(--text2);font-weight:500;
-  transition:border-color var(--dur);user-select:none}
-.toggle:hover{border-color:var(--brand)}
-.toggle input[type=checkbox]{accent-color:var(--brand);width:15px;height:15px}
-.hint{font-size:12px;color:var(--text3);line-height:1.6;margin-top:4px}
-.hint b{color:var(--brand);font-weight:600}
+/* ── Card Styling ─────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--rlg);
+  box-shadow: var(--shsm);
+  transition: box-shadow var(--dur), border-color var(--dur);
+  overflow: hidden;
+}
+.card:hover { box-shadow: var(--shmd); }
+.ch {
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+}
+.cstep {
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(79,70,229,0.3);
+}
+.ctitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.cb { padding: 14px 16px; }
 
-/* INFO PANEL */
-.infop details summary{cursor:pointer;list-style:none;display:flex;
-  align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--text);padding:4px 0}
-.infop details summary::before{content:'';width:6px;height:6px;
-  border-right:2px solid var(--brand);border-bottom:2px solid var(--brand);
-  transform:rotate(-45deg);display:inline-block;flex-shrink:0;
-  transition:transform var(--dur);margin-top:1px}
-.infop details[open] summary::before{transform:rotate(45deg);margin-top:-2px}
-.infop details p{font-size:13px;color:var(--text2);line-height:1.7;margin-top:10px}
-.infop details b{color:var(--brand);font-weight:600}
-.inote{margin-top:12px;padding:10px 12px;background:var(--warn-bg);
-  border:1px solid var(--warn-bd);border-radius:var(--r);
-  font-size:12px;color:var(--warn-t);line-height:1.65}
+/* ── Fields & Form Controls ────────────────────────── */
+.fl { display: flex; flex-direction: column; gap: 4px; }
+.flbl { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+.frow { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; }
+select, input[type=text] {
+  color: var(--text);
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  padding: 7px 10px;
+  height: 36px;
+  font-size: 13px;
+  transition: border-color var(--dur), box-shadow var(--dur), background var(--dur);
+  outline: none;
+  width: 100%;
+}
+select:focus, input[type=text]:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  background: var(--surface);
+}
+input[type=text] { width: 80px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
 
-/* CAM TABLE */
-.tscroll{overflow-x:auto;border-radius:var(--r)}
-table{border-collapse:collapse;width:100%;min-width:480px}
-thead th{padding:8px 8px 10px;text-align:center;font-size:10.5px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.6px;color:var(--text3);
-  background:var(--surface);border-bottom:2px solid var(--border);white-space:nowrap}
-tbody tr{border-bottom:1px solid var(--border);transition:background var(--dur)}
-tbody tr:last-child{border-bottom:0}
-tbody tr:hover{background:var(--surface2)}
-td{padding:6px 8px;text-align:center;vertical-align:middle}
-td.fn{font-size:11px;font-weight:700;color:var(--text4);width:36px}
-td.yc{text-align:left;min-width:130px}
-td.yc .yl{display:block;font-size:11px;color:var(--text3);line-height:1.4;margin-top:2px}
-td input[type=color]{width:32px;height:28px;border:1.5px solid var(--border);
-  border-radius:4px;padding:1px;background:var(--surface2);cursor:pointer;
-  transition:box-shadow var(--dur)}
-td input[type=color]:hover{box-shadow:0 0 0 3px rgba(99,102,241,.2)}
+/* Stepper */
+.stp {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface2);
+  height: 36px;
+}
+.stp button {
+  width: 32px;
+  height: 100%;
+  background: transparent;
+  color: var(--text2);
+  font-size: 17px;
+  transition: background var(--dur), color var(--dur);
+  border-right: 1px solid var(--border);
+}
+.stp button:last-child { border-right: 0; border-left: 1px solid var(--border); }
+.stp button:hover { background: var(--brand); color: #fff; }
+.stp span { flex: 1; text-align: center; font-weight: 700; font-size: 13.5px; color: var(--text); min-width: 28px; }
 
-/* CAM BUTTONS */
-.cb2{width:42px;height:36px;border:1.5px solid var(--miss-bd);border-radius:6px;
-  font-size:17px;font-weight:700;background:var(--miss-bg);color:var(--miss-t);
-  transition:all var(--dur);box-shadow:0 1px 2px rgba(0,0,0,.05)}
-.cb2:hover{transform:translateY(-1px);box-shadow:var(--shsm)}
-.cb2:active{transform:scale(.9);box-shadow:none}
-.cb2[data-v="K"]{background:var(--knit-bg);border-color:var(--knit-bd);color:var(--knit-t);
-  box-shadow:0 2px 6px rgba(37,99,235,.18)}
-.cb2[data-v="T"]{background:var(--tuck-bg);border-color:var(--tuck-bd);color:var(--tuck-t);
-  box-shadow:0 2px 6px rgba(217,119,6,.18)}
-.cb2.off{opacity:.24;filter:grayscale(.6);box-shadow:none}
+/* Toggle */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surface2);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text2);
+  font-weight: 600;
+  transition: border-color var(--dur);
+  user-select: none;
+}
+.toggle:hover { border-color: var(--brand); }
+.toggle input[type=checkbox] { accent-color: var(--brand); width: 14px; height: 14px; }
+.hint { font-size: 11.5px; color: var(--text3); line-height: 1.55; margin-top: 4px; }
+.hint b { color: var(--brand); font-weight: 600; }
 
-/* LEGEND */
-.lgnd{display:flex;flex-wrap:wrap;gap:12px;padding:10px 14px;
-  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px}
-.li{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text3)}
-.li b{font-size:15px;color:var(--text)}
+/* ── Textile HUD & Specs ───────────────────────────── */
+.hud-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.hud-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 8px 6px;
+  text-align: center;
+}
+.hud-num { font-size: 16px; font-weight: 700; color: var(--text); font-family: Inter, sans-serif; }
+.hud-lbl { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; margin-top: 2px; }
+.hud-bars { display: flex; flex-direction: column; gap: 7px; }
+.hud-bar-row { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; }
+.hud-bar-name { width: 56px; color: var(--text3); }
+.hud-bar-track { flex: 1; height: 7px; background: var(--surface3); border-radius: 999px; overflow: hidden; }
+.hud-bar-fill { height: 100%; border-radius: 999px; transition: width var(--dur) var(--ease); }
+.hud-bar-fill.k { background: #3b82f6; }
+.hud-bar-fill.t { background: #f59e0b; }
+.hud-bar-fill.m { background: #94a3b8; }
+.hud-bar-val { width: 34px; text-align: right; font-family: Inter, sans-serif; color: var(--text2); }
 
-/* ACTIONS */
-.ta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.bg{border:1.5px solid var(--border);background:var(--surface);color:var(--text2);
-  border-radius:var(--r);padding:6px 14px;font-size:12.5px;font-weight:600;
-  transition:all var(--dur);white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,.05)}
-.bg:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-bg);box-shadow:var(--shsm)}
-.bg:active{transform:scale(.97)}
+/* ── Cam Table ─────────────────────────────────────── */
+.tscroll { overflow-x: auto; border-radius: var(--r); }
+table { border-collapse: collapse; width: 100%; min-width: 440px; }
+thead th {
+  padding: 8px 6px 9px;
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text3);
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+thead th.col-hdr { cursor: pointer; transition: color var(--dur), background var(--dur); border-radius: 4px; }
+thead th.col-hdr:hover { color: var(--brand); background: var(--brand-bg); }
+tbody tr { border-bottom: 1px solid var(--border); transition: background var(--dur); }
+tbody tr:last-child { border-bottom: 0; }
+tbody tr:hover { background: var(--surface2); }
+tbody tr.tr-active { background: rgba(99,102,241,0.08); }
+td { padding: 5px 6px; text-align: center; vertical-align: middle; }
+td.fn { font-size: 11px; font-weight: 700; color: var(--text4); width: 32px; font-family: Inter, sans-serif; }
+td.yc { text-align: left; min-width: 125px; }
+td.yc .yl { display: block; font-size: 10.5px; color: var(--text3); line-height: 1.35; margin-top: 2px; }
+td input[type=color] {
+  width: 30px;
+  height: 26px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  padding: 1px;
+  background: var(--surface2);
+  cursor: pointer;
+  transition: box-shadow var(--dur);
+}
+td input[type=color]:hover { box-shadow: 0 0 0 3px rgba(99,102,241,0.2); }
 
-/* VIEW TABS */
-.vtabs{display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);
-  border-radius:var(--r);padding:3px;margin-bottom:14px;width:fit-content}
-.vtab{border-radius:6px;padding:6px 16px;font-size:12.5px;font-weight:600;
-  color:var(--text3);background:transparent;border:0;transition:all var(--dur);white-space:nowrap}
-.vtab:hover{color:var(--text)}
-.vtab[aria-pressed="true"]{background:var(--surface);color:var(--brand);
-  box-shadow:var(--shsm);border:1px solid var(--border)}
+/* Cam Buttons */
+.cb2 {
+  width: 40px;
+  height: 35px;
+  border: 1.5px solid var(--miss-bd);
+  border-radius: 6px;
+  font-size: 17px;
+  font-weight: 700;
+  background: var(--miss-bg);
+  color: var(--miss-t);
+  transition: all var(--dur);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.cb2:hover { transform: translateY(-1px); box-shadow: var(--shsm); }
+.cb2:active { transform: scale(0.92); box-shadow: none; }
+.cb2[data-v="K"] {
+  background: var(--knit-bg);
+  border-color: var(--knit-bd);
+  color: var(--knit-t);
+  box-shadow: 0 2px 6px rgba(37,99,235,0.18);
+}
+.cb2[data-v="T"] {
+  background: var(--tuck-bg);
+  border-color: var(--tuck-bd);
+  color: var(--tuck-t);
+  box-shadow: 0 2px 6px rgba(217,119,6,0.18);
+}
+.cb2.off { opacity: 0.22; filter: grayscale(0.7); box-shadow: none; }
 
-/* PLAYBACK */
-.pb{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.bplay{border:0;background:var(--brand);color:#fff;border-radius:var(--r);
-  padding:8px 20px;height:40px;font-weight:700;font-size:13px;
-  box-shadow:0 2px 10px rgba(99,102,241,.38);transition:all var(--dur);
-  white-space:nowrap;display:flex;align-items:center;gap:6px}
-.bplay:hover{background:var(--brand-h);transform:translateY(-1px);
-  box-shadow:0 4px 16px rgba(99,102,241,.48)}
-.bplay:active{transform:translateY(0)}
-input[type=range]{flex:1;height:4px;accent-color:var(--brand);cursor:pointer;min-width:60px}
+/* Legend */
+.lgnd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  margin-bottom: 12px;
+  align-items: center;
+}
+.li { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text3); }
+.li b { font-size: 14px; color: var(--text); }
 
-/* STATUS */
-.stat{padding:8px 14px;background:var(--brand-bg);border:1px solid var(--brand-ll);
-  border-radius:var(--r);font-size:12.5px;color:var(--brand);font-weight:500;
-  margin-bottom:14px;line-height:1.5}
-[data-theme="dark"] .stat{background:rgba(99,102,241,.12);
-  border-color:rgba(99,102,241,.3);color:var(--brand-ll)}
+/* Toolbar Actions */
+.ta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; align-items: center; }
+.bg {
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text2);
+  border-radius: var(--r);
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all var(--dur);
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.bg:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-bg); box-shadow: var(--shsm); }
+.bg:active { transform: scale(0.96); }
 
-/* TOOLS */
-.tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.ssm{height:34px;padding:4px 10px;font-size:13px;border:1.5px solid var(--border);
-  border-radius:var(--r);background:var(--surface2);color:var(--text);width:auto;cursor:pointer}
-.ssm:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(99,102,241,.14)}
+/* ── Studio / Preview Column ───────────────────────── */
+.vtabs {
+  display: flex;
+  gap: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 3px;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+.vtab {
+  border-radius: 6px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text3);
+  background: transparent;
+  border: 0;
+  transition: all var(--dur);
+  white-space: nowrap;
+}
+.vtab:hover { color: var(--text); }
+.vtab[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--brand);
+  box-shadow: var(--shsm);
+  border: 1px solid var(--border);
+}
 
-/* CANVAS */
-.cw{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;
-  padding:12px;overflow-x:auto;box-shadow:inset 0 2px 8px rgba(0,0,0,.04)}
-canvas{display:block}
+/* Playback */
+.pb { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.bplay {
+  border: 0;
+  background: var(--brand);
+  color: #fff;
+  border-radius: var(--r);
+  padding: 6px 14px;
+  height: 36px;
+  font-weight: 700;
+  font-size: 12.5px;
+  box-shadow: 0 2px 8px rgba(79,70,229,0.35);
+  transition: all var(--dur);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.bplay:hover { background: var(--brand-h); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79,70,229,0.45); }
+.bplay:active { transform: translateY(0); }
+.btn-step {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surface2);
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--dur);
+}
+.btn-step:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-bg); }
+input[type=range] { flex: 1; height: 4px; accent-color: var(--brand); cursor: pointer; min-width: 50px; }
 
-/* WARNINGS */
-.wl{list-style:none;margin-top:14px;display:flex;flex-direction:column;gap:6px}
-.wl li{display:flex;align-items:flex-start;gap:8px;padding:10px 14px;
-  border-radius:var(--r);background:var(--warn-bg);border:1px solid var(--warn-bd);
-  color:var(--warn-t);font-size:13px;line-height:1.55}
-.wl li::before{content:"⚠";flex-shrink:0}
-.wl li.ok{background:var(--ok-bg);border-color:var(--ok-bd);color:var(--ok-t)}
-.wl li.ok::before{content:"✓";font-weight:700}
+/* Status */
+.stat {
+  padding: 7px 12px;
+  background: var(--brand-bg);
+  border: 1px solid var(--brand-ll);
+  border-radius: var(--r);
+  font-size: 12px;
+  color: var(--brand);
+  font-weight: 500;
+  margin-bottom: 12px;
+  line-height: 1.45;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+[data-theme="dark"] .stat {
+  background: rgba(99,102,241,0.12);
+  border-color: rgba(99,102,241,0.3);
+  color: var(--brand-ll);
+}
 
-/* FOOTER */
-.ft{border-top:1px solid var(--border);padding:16px 20px;max-width:1200px;margin:0 auto;width:100%}
-.fn2{font-size:12px;color:var(--text4);line-height:1.6}
-.fn2 b{color:var(--text3);font-weight:600}
+/* Tools Bar */
+.tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.ssm {
+  height: 32px;
+  padding: 3px 8px;
+  font-size: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surface2);
+  color: var(--text);
+  width: auto;
+  cursor: pointer;
+}
+.ssm:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(99,102,241,0.14); }
 
-/* ANIMATIONS */
-@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.card{animation:fu .22s var(--ease) both}
-.lc .card:nth-child(1){animation-delay:.04s}
-.lc .card:nth-child(2){animation-delay:.08s}
-.rc .card:nth-child(1){animation-delay:.06s}
-.rc .card:nth-child(2){animation-delay:.10s}
+/* Canvas & Inspector Tooltip */
+.cw-container { position: relative; }
+.cw {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  overflow-x: auto;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+  cursor: crosshair;
+}
+canvas { display: block; }
 
-@media(max-width:900px){.two{grid-template-columns:1fr}}
-@media(max-width:600px){
-  .wrap{padding:14px 12px 40px}
-  .nav-i{padding:0 14px}
-  .nav-badge{display:none}
+.canvas-inspect {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(17,23,38,0.85);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.12);
+  white-space: nowrap;
+}
+.canvas-inspect.show { opacity: 1; }
+
+/* Warnings */
+.wl { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.wl li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--r);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-bd);
+  color: var(--warn-t);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.wl li::before { content: "⚠️"; flex-shrink: 0; font-size: 13px; }
+.wl li.ok { background: var(--ok-bg); border-color: var(--ok-bd); color: var(--ok-t); }
+.wl li.ok::before { content: "✓"; font-weight: 700; color: #15803d; }
+
+/* Info Details */
+.infop details summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+  padding: 2px 0;
+}
+.infop details summary::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-right: 2px solid var(--brand);
+  border-bottom: 2px solid var(--brand);
+  transform: rotate(-45deg);
+  display: inline-block;
+  flex-shrink: 0;
+  transition: transform var(--dur);
+  margin-top: 1px;
+}
+.infop details[open] summary::before { transform: rotate(45deg); margin-top: -2px; }
+.infop details p { font-size: 12.5px; color: var(--text2); line-height: 1.6; margin-top: 8px; }
+.infop details b { color: var(--brand); font-weight: 600; }
+.inote {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-bd);
+  border-radius: var(--r);
+  font-size: 11.5px;
+  color: var(--warn-t);
+  line-height: 1.55;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #0f172a;
+  color: #fff;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shlg);
+  border: 1px solid rgba(255,255,255,0.15);
+  transform: translateY(40px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.22s var(--ease);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* Keyboard Shortcuts Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--rlg);
+  box-shadow: var(--shlg);
+  max-width: 420px;
+  width: 100%;
+  padding: 20px;
+  animation: fu 0.2s ease both;
+}
+.modal-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.modal-h h3 { font-size: 16px; font-weight: 700; color: var(--text); }
+.modal-close { font-size: 20px; color: var(--text3); cursor: pointer; }
+.k-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.k-row:last-child { border-bottom: 0; }
+kbd {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--brand);
+  box-shadow: 0 1px 1px rgba(0,0,0,0.08);
+}
+
+/* Footer */
+.ft {
+  border-top: 1px solid var(--border);
+  padding: 16px 20px;
+  max-width: 1540px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.fn2 { font-size: 12px; color: var(--text4); line-height: 1.5; }
+.fn2 b { color: var(--text3); font-weight: 600; }
+.ft-shortcuts { font-size: 11px; color: var(--text3); display: flex; gap: 8px; align-items: center; }
+
+/* Responsive Media Queries */
+@media (max-width: 1200px) {
+  .workbench { grid-template-columns: 280px 1fr; }
+  .wb-preview { grid-column: 1 / -1; }
+  .wb-sticky { position: static; max-height: none; }
+}
+@media (max-width: 768px) {
+  .workbench { grid-template-columns: 1fr; }
+  .wrap { padding: 14px 12px 40px; }
+  .nav-i { padding: 0 14px; }
+  .nav-badge { display: none; }
 }
 </style>
 </head>
@@ -282,20 +774,30 @@ canvas{display:block}
       </div>
     </a>
     <div class="nav-sp"></div>
-    <span class="nav-badge">v2.0</span>
-    <button class="nav-btn" id="exportBtn" title="PNG হিসেবে ডাউনলোড">⬇</button>
+    <span class="nav-badge">v2.1 CAD</span>
+    <button class="nav-btn" id="kbdBtn" title="কীবোর্ড শর্টকাট">⌨</button>
+    <button class="nav-btn" id="soundBtn" title="শব্দ ইফেক্ট চালু/বন্ধ">🔊</button>
+    <button class="nav-btn" id="exportBtn" title="PNG ইমেজ ডাউনলোড">⬇</button>
     <button class="nav-btn" id="themeBtn" title="থিম পরিবর্তন">🌙</button>
   </div>
 </nav>
 
 <div class="wrap">
   <div class="hero">
-    <h1>নিটিং ক্যাম সিমুলেটর</h1>
-    <p>প্রতিটি ফিডারে ক্যাম সাজান, রিয়েল-টাইমে ফেব্রিকের গঠন দেখুন</p>
+    <div>
+      <h1>🧵 নিটিং ক্যাম সিমুলেটর ও ফেব্রিক স্টুডিও</h1>
+      <p>প্রতিটি ফিডারে ক্যাম সাজান, রিয়েল-টাইমে ফেব্রিকের গঠন ও স্পেসিফিকেশন দেখুন</p>
+    </div>
+    <div class="hero-badges">
+      <span class="h-pill" id="badgeRepeat">রিপিট: ১৮ কোর্স × ৩৬ সুই</span>
+      <span class="h-pill" id="badgeType">টাইপ: Circular Rib</span>
+    </div>
   </div>
 
-  <div class="two">
-    <div class="lc">
+  <div class="workbench">
+
+    <!-- Column 1: Machine Setup & Stats HUD -->
+    <div class="wb-col wb-side">
 
       <div class="card">
         <div class="ch">
@@ -303,7 +805,7 @@ canvas{display:block}
           <span class="ctitle">মেশিন সেটআপ</span>
         </div>
         <div class="cb">
-          <div class="fl" style="margin-bottom:14px">
+          <div class="fl" style="margin-bottom:12px">
             <label class="flbl" for="preset">ফেব্রিক প্রিসেট</label>
             <select id="preset">
               <option value="sheet">আপনার শিট (১৮ ফিডার)</option>
@@ -317,7 +819,7 @@ canvas{display:block}
               <option value="custom">নিজের ডিজাইন</option>
             </select>
           </div>
-          <div class="frow" style="margin-bottom:14px">
+          <div class="frow" style="margin-bottom:12px">
             <div class="fl"><label class="flbl">ফিডার</label>
               <div class="stp"><button id="fMinus">−</button><span id="fVal"></span><button id="fPlus">+</button></div></div>
             <div class="fl"><label class="flbl">রাউন্ড</label>
@@ -325,7 +827,7 @@ canvas{display:block}
             <div class="fl"><label class="flbl">ওয়েল</label>
               <div class="stp"><button id="wMinus">−</button><span id="wVal"></span><button id="wPlus">+</button></div></div>
           </div>
-          <div class="frow" style="margin-bottom:14px">
+          <div class="frow" style="margin-bottom:12px">
             <div class="fl"><label class="flbl" for="layout">সুই বিন্যাস</label>
               <input type="text" id="layout" maxlength="12" autocapitalize="characters"></div>
             <div class="fl"><label class="flbl" for="cylButt">সিলি. বাট</label>
@@ -333,18 +835,60 @@ canvas{display:block}
             <div class="fl"><label class="flbl" for="dialButt">ডায়াল বাট</label>
               <input type="text" id="dialButt" maxlength="6" inputmode="numeric"></div>
           </div>
-          <p class="hint">বিন্যাস: <b>C</b>=সিলিন্ডার, <b>D</b>=ডায়াল, <b>B</b>=উভয়। বাট ইংরেজি সংখ্যায় (যেমন <b>123</b>)।</p>
+          <p class="hint">বিন্যাস: <b>C</b>=সিলিন্ডার, <b>D</b>=ডায়াল, <b>B</b>=উভয়। বাট: <b>123</b> / <b>12</b>।</p>
         </div>
       </div>
 
+      <!-- Live Textile Specs HUD -->
+      <div class="card">
+        <div class="ch">
+          <div class="cstep" style="background:linear-gradient(135deg,var(--brand),#a855f7)">⚡</div>
+          <span class="ctitle">লাইভ টেক্সটাইল HUD</span>
+        </div>
+        <div class="cb">
+          <div class="hud-grid">
+            <div class="hud-item">
+              <div class="hud-num" id="hudCourses">36</div>
+              <div class="hud-lbl">মোট কোর্স</div>
+            </div>
+            <div class="hud-item">
+              <div class="hud-num" id="hudWales">36</div>
+              <div class="hud-lbl">ওয়েল সুই</div>
+            </div>
+            <div class="hud-item">
+              <div class="hud-num" id="hudRepeat">18×36</div>
+              <div class="hud-lbl">রিপিট সাইজ</div>
+            </div>
+          </div>
+          <div class="hud-bars" style="margin-top:12px">
+            <div class="hud-bar-row">
+              <span class="hud-bar-name">নিট (∧)</span>
+              <div class="hud-bar-track"><div class="hud-bar-fill k" id="barK" style="width:0%"></div></div>
+              <span class="hud-bar-val" id="valK">0%</span>
+            </div>
+            <div class="hud-bar-row">
+              <span class="hud-bar-name">টাক (∨)</span>
+              <div class="hud-bar-track"><div class="hud-bar-fill t" id="barT" style="width:0%"></div></div>
+              <span class="hud-bar-val" id="valT">0%</span>
+            </div>
+            <div class="hud-bar-row">
+              <span class="hud-bar-name">মিস (—)</span>
+              <div class="hud-bar-track"><div class="hud-bar-fill m" id="barM" style="width:0%"></div></div>
+              <span class="hud-bar-val" id="valM">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Details -->
       <div class="card infop">
         <div class="ch">
-          <div class="cstep" style="background:var(--surface3);color:var(--text3);font-size:14px">ℹ</div>
-          <span class="ctitle">ডিজাইন তথ্য</span>
+          <div class="cstep" style="background:var(--surface3);color:var(--text3);font-size:13px">ℹ</div>
+          <span class="ctitle">ডিজাইন গাইড</span>
         </div>
         <div class="cb">
           <details open>
-            <summary id="infoTitle">এই ডিজাইনটা কী</summary>
+            <summary id="infoTitle">ডিজাইন পরিচিতি</summary>
             <div id="infoBody"></div>
           </details>
         </div>
@@ -352,26 +896,35 @@ canvas{display:block}
 
     </div>
 
-    <div class="rc">
+    <!-- Column 2: Cam Arrangement Matrix -->
+    <div class="wb-col wb-matrix">
 
       <div class="card">
-        <div class="ch">
-          <div class="cstep">২</div>
-          <span class="ctitle">ক্যাম অ্যারেঞ্জমেন্ট</span>
+        <div class="ch" style="justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="cstep">২</div>
+            <span class="ctitle">ক্যাম অ্যারেঞ্জমেন্ট ম্যাট্রিক্স</span>
+          </div>
+          <span style="font-size:11px;color:var(--text3)">হেডারে ক্লিক করে কলাম পাল্টান</span>
         </div>
         <div class="cb">
           <div class="lgnd" id="legend"></div>
           <div class="tscroll">
             <table>
               <thead><tr>
-                <th>#</th><th>সুতা</th>
-                <th id="hD1">ডায়াল ১</th><th id="hD2">ডায়াল ২</th>
-                <th id="hC1">সিলি. ১</th><th id="hC2">সিলি. ২</th><th id="hC3">সিলি. ৩</th>
+                <th>#</th><th>সুতা ও কাউন্ট</th>
+                <th id="hD1" class="col-hdr" title="ডায়াল ১ এর সব সুইচ একসাথে বদলাতে ক্লিক করুন">ডায়াল ১ ⟳</th>
+                <th id="hD2" class="col-hdr" title="ডায়াল ২ এর সব সুইচ একসাথে বদলাতে ক্লিক করুন">ডায়াল ২ ⟳</th>
+                <th id="hC1" class="col-hdr" title="সিলিন্ডার ১ এর সব সুইচ একসাথে বদলাতে ক্লিক করুন">সিলি. ১ ⟳</th>
+                <th id="hC2" class="col-hdr" title="সিলিন্ডার ২ এর সব সুইচ একসাথে বদলাতে ক্লিক করুন">সিলি. ২ ⟳</th>
+                <th id="hC3" class="col-hdr" title="সিলিন্ডার ৩ এর সব সুইচ একসাথে বদলাতে ক্লিক করুন">সিলি. ৩ ⟳</th>
               </tr></thead>
               <tbody id="camBody"></tbody>
             </table>
           </div>
           <div class="ta">
+            <button class="bg" id="allKnitBtn">সব নিট (∧)</button>
+            <button class="bg" id="allMissBtn">ক্লিয়ার (সব মিস)</button>
             <button class="bg" id="sameColor">একই রঙ</button>
             <button class="bg" id="stripeColor">স্ট্রাইপ রঙ</button>
             <label class="toggle">
@@ -382,46 +935,93 @@ canvas{display:block}
         </div>
       </div>
 
+    </div>
+
+    <!-- Column 3: Sticky Fabric Studio Preview -->
+    <div class="wb-col wb-preview wb-sticky">
+
       <div class="card">
         <div class="ch">
           <div class="cstep">৩</div>
-          <span class="ctitle">ফেব্রিক প্রিভিউ</span>
+          <span class="ctitle">ফেব্রিক স্টুডিও ও সিমুলেশন</span>
         </div>
         <div class="cb">
           <div class="vtabs" role="group">
-            <button class="vtab" data-view="face" aria-pressed="true">সামনের দিক</button>
-            <button class="vtab" data-view="back" aria-pressed="false">পেছনের দিক</button>
-            <button class="vtab" data-view="map" aria-pressed="false">সুই-ম্যাপ</button>
+            <button class="vtab" data-view="face" aria-pressed="true">সামনের দিক (Face)</button>
+            <button class="vtab" data-view="back" aria-pressed="false">পেছনের দিক (Back)</button>
+            <button class="vtab" data-view="map" aria-pressed="false">সুই-ম্যাপ (CAD)</button>
           </div>
           <div class="pb">
+            <button class="btn-step" id="stepPrev" title="আগের কোর্স (−১)">⏮</button>
             <button class="bplay" id="play">
               <span id="playIcon">▶</span>
               <span id="playLabel">ধাপে ধাপে</span>
             </button>
+            <button class="btn-step" id="stepNext" title="পরের কোর্স (+১)">⏭</button>
             <input type="range" id="upto" min="1" max="36" value="36">
           </div>
           <div class="stat" id="now"></div>
           <div class="tools">
-            <span class="flbl" style="margin:0;white-space:nowrap">আকার:</span>
+            <span class="flbl" style="margin:0;white-space:nowrap">জুম:</span>
             <select class="ssm" id="zoom">
-              <option value="1">স্বাভাবিক</option>
-              <option value="1.6">বড়</option>
-              <option value="2.2">অনেক বড়</option>
+              <option value="1">১০০% সাধারণ</option>
+              <option value="1.5">১৫০% বড়</option>
+              <option value="2.0">২০০% অনেক বড়</option>
+            </select>
+            <span class="flbl" style="margin:0 0 0 6px;white-space:nowrap">গতি:</span>
+            <select class="ssm" id="speed">
+              <option value="450">ধীরগতি</option>
+              <option value="260" selected>স্বাভাবিক</option>
+              <option value="120">দ্রুত</option>
             </select>
             <div style="flex:1"></div>
-            <p class="hint" id="viewHint" style="margin:0;font-size:11px;text-align:right;max-width:260px"></p>
+            <p class="hint" id="viewHint" style="margin:0;font-size:11px;text-align:right"></p>
           </div>
-          <div class="cw" id="wrap"><canvas id="cv" role="img"></canvas></div>
+
+          <!-- Canvas with Tooltip Inspector -->
+          <div class="cw-container">
+            <div class="cw" id="wrap"><canvas id="cv" role="img" aria-label="ফেব্রিক সিমুলেশন"></canvas></div>
+            <div class="canvas-inspect" id="canvasInspect"></div>
+          </div>
+
           <ul class="wl" id="warn"></ul>
         </div>
       </div>
 
     </div>
+
   </div>
 </div>
 
+<!-- Shortcuts Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-h">
+      <h3>⌨ কীবোর্ড শর্টকাট</h3>
+      <span class="modal-close" id="modalClose">&times;</span>
+    </div>
+    <div class="k-row"><span>প্লে / পজ সিমুলেশন</span> <kbd>Space</kbd></div>
+    <div class="k-row"><span>আগের কোর্স / পরের কোর্স</span> <kbd>←</kbd> / <kbd>→</kbd></div>
+    <div class="k-row"><span>সামনের দিক (Face View)</span> <kbd>1</kbd></div>
+    <div class="k-row"><span>পেছনের দিক (Back View)</span> <kbd>2</kbd></div>
+    <div class="k-row"><span>সুই-ম্যাপ (CAD Map)</span> <kbd>3</kbd></div>
+    <div class="k-row"><span>ডার্ক / লাইট থিম পরিবর্তন</span> <kbd>D</kbd></div>
+    <div class="k-row"><span>PNG ইমেজ এক্সপোর্ট</span> <kbd>E</kbd></div>
+    <div class="k-row"><span>রিসেট / স্টপ</span> <kbd>Esc</kbd></div>
+  </div>
+</div>
+
+<!-- Toast Notice -->
+<div class="toast" id="toast"><span>✓</span><span id="toastMsg">কার্যক্রম সম্পন্ন</span></div>
+
 <footer class="ft">
-  <p class="fn2"><b>⚠ বিজ্ঞপ্তি:</b> এটি ডিজাইন-বোঝার টুল। সুতার টান, স্ট্রেচ বা GSM হিসাব হয় না। প্রিসেটগুলো সরলীকৃত — আসল কারখানার ক্যাম চার্ট আলাদা হতে পারে।</p>
+  <p class="fn2"><b>⚠ টেক্সটাইল বিজ্ঞপ্তি:</b> এটি ভিজ্যুয়াল ডিজাইন ও স্ট্রাকচার বোঝার সিএডি টুল। সুতার টেনশন, স্ট্রেচ রিকভারি বা বাস্তব GSM ল্যাব ক্যালিব্রেশন সাপেক্ষ।</p>
+  <div class="ft-shortcuts">
+    <span><kbd>Space</kbd> প্লে</span>
+    <span><kbd>1-3</kbd> ভিউ</span>
+    <span><kbd>D</kbd> থিম</span>
+    <span><kbd>E</kbd> এক্সপোর্ট</span>
+  </div>
 </footer>
 
 <script>
@@ -441,62 +1041,98 @@ var SETS=[
   {key:"c3",name:"সিলিন্ডার ৩",bed:"cyl",butt:"3",head:"hC3"}
 ];
 var ALL_K=["K","K","K","K","K"];
+var ALL_M=["M","M","M","M","M"];
 var SHEET=["MMKMM","KMMMM","KMMKK","MMKMM","MKMMM","MKMKK",
   "MMMKM","KMMMM","KMKMK","MMMKM","MKMMM","MKKMK",
   "MMMMK","KMMMM","KMKKM","MMMMK","MKMMM","MKKKM"].map(function(s){return s.split("");});
 var SY=[{c:"#3b6fb6",l:"30/1 কটন · SL 1.95"},{c:"#d9822b",l:"75D/36F পলি+লাইক্রা"},{c:"#2f9e6d",l:"20/1 কটন · SL 3.95"}];
+
 var PRESETS={
   sheet:{F:18,wales:36,layout:"CD",cyl:"123",dial:"12",mirror:true,
     cams:SHEET,colors:SHEET.map(function(_,i){return SY[i%3].c;}),labels:SHEET.map(function(_,i){return SY[i%3].l;})},
   rib11:{F:4,wales:24,layout:"CD",cyl:"1",dial:"1",mirror:false,cams:[ALL_K,ALL_K,ALL_K,ALL_K]},
   rib22:{F:4,wales:24,layout:"CCDD",cyl:"1",dial:"1",mirror:false,cams:[ALL_K,ALL_K,ALL_K,ALL_K]},
-  interlock:{F:2,wales:24,layout:"B",cyl:"12",dial:"12",mirror:false,cams:[["K","M","K","M","M"],["M","K","M","K","M"]]},
+  interlock:{F:2,wales:24,layout:"B",cyl:"12",dial:"12",mirror:false,
+    cams:[["K","M","K","M","M"],["M","K","M","K","M"]]},
   pique:{F:4,wales:24,layout:"CD",cyl:"12",dial:"1",mirror:false,
     cams:[["K","K","K","T","M"],["K","K","K","M","M"],["K","K","T","K","M"],["K","K","M","K","M"]]},
   waffle:{F:4,wales:24,layout:"CD",cyl:"12",dial:"12",mirror:false,
     cams:[["K","T","K","T","M"],["K","T","K","T","M"],["T","K","T","K","M"],["T","K","T","K","M"]]},
   tuck:{F:4,wales:24,layout:"CD",cyl:"1",dial:"12",mirror:false,
     cams:[["K","K","K","M","M"],["K","T","K","M","M"],["K","K","K","M","M"],["T","K","K","M","M"]]},
-  cardigan:{F:2,wales:24,layout:"CD",cyl:"1",dial:"1",mirror:false,cams:[["T","M","K","M","M"],["K","M","T","M","M"]]}
+  cardigan:{F:2,wales:24,layout:"CD",cyl:"1",dial:"1",mirror:false,
+    cams:[["T","M","K","M","M"],["K","M","T","M","M"]]}
 };
+
 var INFO={
-  sheet:{t:"আপনার শিট: ১৮ ফিডারের রিব ডিজাইন",
-    what:"38×18 মেশিন। সিলিন্ডারে ৩টা ট্র্যাক (বাট ১,২,৩), ডায়ালে ২টা। ৩ ফিডারের ইয়ার্ন-রিপিট ৬ বার।",
-    how:"প্রতিটি সুই সেট ১৮ ফিডারে মাত্র ৬ বার নিট করে, বাকিতে মিস। পলি+লাইক্রা ফিডারে শুধু ডায়াল নিট করে।",
-    look:"সামনে শুধু কটন দেখা যায়। লাইক্রা পেছনে ডায়ালের লুপে থাকে, তাতেই স্ট্রেচ আসে।",
-    use:"৩৮০ GSM স্ট্রেচ রিব, ৮৯% কটন, ৮% পলি, ৩% ইলাস্টেন।",
-    note:"ছবি থেকে পড়া — আসল শিটের সঙ্গে মিলিয়ে নিন।"},
-  rib11:{t:"1×1 রিব",what:"সিলিন্ডার ও ডায়ালের সুই পালা করে বসে।",how:"কোনো টাক বা মিস নেই।",look:"সূক্ষ্ম রিব লাইন, বেশি স্ট্রেচ।",use:"কাফ, কলার, ফিটেড টি-শার্ট।"},
-  rib22:{t:"2×2 রিব",what:"CCDD বিন্যাসে সুই বসে।",how:"ক্যাম সব নিট। পার্থক্য সুই বসানোর ধরন থেকে।",look:"মোটা, স্পষ্ট রিব।",use:"কাফ, কলার।"},
-  interlock:{t:"ইন্টারলক",what:"বিন্যাস B, বাট ১ ও ২ পালা করে।",how:"ফিডার ১ বাট-১, ফিডার ২ বাট-২ নিট করায়।",look:"দুই পাশই মসৃণ।",use:"টি-শার্ট, আন্ডারগার্মেন্টস।"},
-  pique:{t:"পিকে",what:"রিব বিন্যাস, সিলিন্ডার বাট ১-২ পালা করে।",how:"২ বাট পালা টাক ও মিস করে।",look:"হীরা বা মৌচাকের টেক্সচার।",use:"পোলো, স্পোর্টস।"},
-  waffle:{t:"ওয়াফল",what:"রিব বিন্যাস, দুই দিকে বাট ১-২।",how:"বাট-১ ২ কোর্স নিট, তারপর ২ কোর্স টাক।",look:"উঁচু-নিচু চেকার টেক্সচার।",use:"শীতের পোশাক।"},
-  tuck:{t:"টাক ডিজাইন",what:"1×1 রিব, সিলিন্ডার সব নিট, ডায়াল পালা টাক।",how:"ফিডার ২-এ ডায়াল ২ টাক, ফিডার ৪-এ ডায়াল ১।",look:"পেছনে ফোঁটার টেক্সচার।",use:"টেক্সচারড টি-শার্ট।"},
-  cardigan:{t:"ফুল কার্ডিগান",what:"1×1 রিব, এক কোর্স নিট, পরের কোর্স টাক।",how:"ফিডার ১-এ সিলিন্ডার নিট, ডায়াল টাক; ফিডার ২-এ উল্টো।",look:"দুই পাশ এক রকম, মোটা।",use:"কার্ডিগান, জ্যাকেট।"},
-  custom:{t:"নিজের ডিজাইন",what:"আপনি নিজে ক্যাম বসিয়ে ডিজাইন বানাচ্ছেন।",how:"ঘরে চাপ দিলে ∧ (নিট), ∨ (টাক), — (মিস) ঘুরবে।",look:"ফেব্রিক প্রিভিউতে ফল দেখুন।",use:""}
+  sheet:{t:"আপনার শিট: ১৮ ফিডার স্ট্রেচ রিব",
+    what:"38×18 মেশিন। সিলিন্ডারে ৩ ট্র্যাক (বাট ১,২,৩) এবং ডায়ালে ২ ট্র্যাক (বাট ১,২)। ৩ ফিডারের ইয়ার্ন-রিপিট ৬ বার চলে।",
+    how:"প্রতিটি সুই সেট ১৮ ফিডারে মাত্র ৬ বার নিট করে, বাকি সময় মিস। পলি+লাইক্রা ফিডারে শুধু ডায়াল নিট করে।",
+    look:"সামনের দিকে শুধু কটন লুপ দেখা যায়, লাইক্রা পেছনে ডায়ালে থেকে স্ট্রেচ জোগায়।",
+    use:"৩৮০ GSM স্ট্রেচ রিব, ৮৯% কটন, ৮% পলিয়েস্টার, ৩% ইলাস্টেন।",
+    note:"ডায়ালে ∨ কে নিট ধরে হিসাব করা হয়েছে (শিটের নোটেশন অনুযায়ী)।"},
+  rib11:{t:"1×1 রিব (Plain Rib)",what:"সিলিন্ডার ও ডায়াল পালা করে বসে। প্রতি ফিডারে সব সুই নিট।",how:"কোনো টাক বা মিস নেই।",look:"সূক্ষ্ম খাড়া রিব লাইন, সর্বোচ্চ আড়াআড়ি স্থিতিস্থাপকতা।",use:"কাফ, কলার, টি-শার্ট।"},
+  rib22:{t:"2×2 রিব (Derby Rib)",what:"সিলিন্ডারে ২টা, ডায়ালে ২টা সুই বিন্যাস (CCDD)।",how:"সব সুই নিট করে।",look:"মোটা স্পষ্ট রিব দাগ ও দ্রুত রিকভারি।",use:"সোয়েটার বর্ডার, কাফ, ফিটেড ওয়্যার।"},
+  interlock:{t:"ইন্টারলক (Interlock)",what:"সিলিন্ডার ও ডায়াল সুই মুখোমুখি (B)। বাট ১ ও ২ পালা করে বসে।",how:"ফিডার ১ বাট-১ এবং ফিডার ২ বাট-২ নিট করায়।",look:"উভয় পাশ সমান মসৃণ ও ডবল-নিট ঘন।",use:"উন্নত টি-শার্ট, আন্ডারগার্মেন্টস।"},
+  pique:{t:"পিকে (Single Piqué)",what:"রিব বিন্যাসে বাট ১,২ সিলিন্ডারে টাক ও মিস প্যাটার্ন।",how:"৪ ফিডারে টাক ও মিস চক্রাকারে চলে।",look:"মৌচাক বা ডায়মন্ড টেক্সচার।",use:"পোলো শার্ট, স্পোর্টস ফ্যাব্রিক।"},
+  waffle:{t:"ওয়াফল (Waffle Fabric)",what:"উভয় বেডে বাট ১,২ এক সেট নিট করলে অন্য সেট টাক করে।",how:"৪ ফিডারের সেল গঠন।",look:"দ্বিমুখী চেকার্ড স্কয়ার গ্রিড টেক্সচার।",use:"থার্মাল ও উইন্টার ওয়্যার।"},
+  tuck:{t:"টাক ডিজাইন (Tuck Rib)",what:"1×1 রিবে ডায়ালে টাক অল্টারনেশন।",how:"লুপ জমিয়ে টেক্সচার তৈরি।",look:"পেছনে ড্রপ ডট টেক্সচার।",use:"ডিজাইনার টি-শার্ট।"},
+  cardigan:{t:"ফুল কার্ডিগান (Full Cardigan)",what:"প্রতিটি সুই এক কোর্সে নিট, পরের কোর্সে টাক।",how:"ডবল কোর্স সমন্বয়।",look:"মোটা, ফ্লাফি ও উষ্ণ টেক্সচার।",use:"ভারী সোয়েটার, কার্ডিগান।"},
+  custom:{t:"কাস্টম ডিজাইন",what:"আপনার নিজস্ব প্যারামিটারে ক্যাম ও সুই সেটআপ।",how:"ক্যামের ঘরে চাপ দিলে ∧, ∨, — পরিবর্তন হবে।",look:"ডান পাশের ক্যানভাসে রিয়েল-টাইমে আউটপুট দেখুন।",use:""}
 };
+
 var S={preset:"sheet",F:18,rounds:2,wales:36,layout:"CD",cylButt:"123",dialButt:"12",
-       view:"face",cams:[],mirror:true,upto:36,zoom:1};
-var timer=null;
+  view:"face",cams:[],mirror:true,upto:36,zoom:1,speed:260,sound:true};
+var timer=null,audioCtx=null;
+
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function totalCourses(){return S.F*S.rounds;}
 function resetUpto(){stopPlay();S.upto=totalCourses();}
+
+/* ── Web Audio Feedback ────────────────────────────── */
+function playTick(freq, dur){
+  if(!S.sound) return;
+  try{
+    if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==="suspended") audioCtx.resume();
+    var osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+    osc.type="sine"; osc.frequency.setValueAtTime(freq||700, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+(dur||0.02));
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime+(dur||0.02));
+  }catch(e){}
+}
+
+/* ── Toast Feedback ────────────────────────────────── */
+function showToast(msg){
+  var t=$("toast"), tm=$("toastMsg");
+  tm.textContent=msg;
+  t.classList.add("show");
+  clearTimeout(t._tm);
+  t._tm=setTimeout(function(){t.classList.remove("show");},2000);
+}
+
 function loadPreset(name){
   var p=PRESETS[name];if(!p)return;
-  S.preset=name;S.F=p.F;S.layout=p.layout;S.cylButt=p.cyl;
-  S.dialButt=p.dial;S.mirror=p.mirror;S.wales=p.wales;
+  S.preset=name;S.F=p.F;S.layout=p.layout;S.cylButt=p.cyl;S.dialButt=p.dial;S.mirror=p.mirror;S.wales=p.wales;
   S.cams=p.cams.map(function(c,i){
-    return{d1:c[0],d2:c[1],c1:c[2],c2:c[3],c3:c[4],
-           color:p.colors?p.colors[i]:BASE,label:p.labels?p.labels[i]:""};});
-  S.rounds=Math.max(2,Math.round(28/S.F));resetUpto();
+    return{d1:c[0],d2:c[1],c1:c[2],c2:c[3],c3:c[4],color:p.colors?p.colors[i]:BASE,label:p.labels?p.labels[i]:""};
+  });
+  S.rounds=Math.max(2,Math.round(28/S.F));
+  resetUpto();
+  showToast(INFO[name]?INFO[name].t+" লোড হয়েছে":"প্রিসেট লোড হয়েছে");
 }
+
 function setFeeders(n){
   n=clamp(n,1,18);
   while(S.cams.length<n){
     var l=S.cams[S.cams.length-1]||{d1:"K",d2:"K",c1:"K",c2:"K",c3:"K",color:BASE,label:""};
-    S.cams.push({d1:l.d1,d2:l.d2,c1:l.c1,c2:l.c2,c3:l.c3,color:l.color,label:""});}
+    S.cams.push({d1:l.d1,d2:l.d2,c1:l.c1,c2:l.c2,c3:l.c3,color:l.color,label:""});
+  }
   S.cams.length=n;S.F=n;
 }
+
 function build(){
   var out=[],ci=0,di=0;
   for(var p=0;p<S.wales;p++){
@@ -504,7 +1140,9 @@ function build(){
     var o={p:p,ch:ch,cyl:null,dial:null};
     if(ch==="C"||ch==="B"){o.cyl=S.cylButt.charAt(ci%S.cylButt.length);ci++;}
     if(ch==="D"||ch==="B"){o.dial=S.dialButt.charAt(di%S.dialButt.length);di++;}
-    out.push(o);}return out;
+    out.push(o);
+  }
+  return out;
 }
 function action(cam,bed,butt){return cam[(bed==="cyl"?"c":"d")+butt]||"M";}
 function presentSets(model){return SETS.filter(function(s){return model.some(function(m){return m[s.bed]===s.butt;});});}
@@ -514,8 +1152,11 @@ function repeatWidth(model){
     var ok=true;
     for(var p=0;p+w<model.length;p++){
       var a=model[p],b=model[p+w];
-      if(a.ch!==b.ch||a.cyl!==b.cyl||a.dial!==b.dial){ok=false;break;}}
-    if(ok)return w;}return 0;
+      if(a.ch!==b.ch||a.cyl!==b.cyl||a.dial!==b.dial){ok=false;break;}
+    }
+    if(ok)return w;
+  }
+  return 0;
 }
 function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
 function shade(hex,amt){
@@ -523,15 +1164,20 @@ function shade(hex,amt){
   var r=clamp(((n>>16)&255)+amt,0,255),g=clamp(((n>>8)&255)+amt,0,255),b=clamp((n&255)+amt,0,255);
   return"rgb("+r+","+g+","+b+")";
 }
+
 function drawLoop(ctx,x,y,w,h,color,type){
   var lw=Math.max(2.4,w*0.3);
   ctx.lineCap="round";ctx.lineJoin="round";
   function V(top,bot,col,width){
     ctx.strokeStyle=col;ctx.lineWidth=width;ctx.beginPath();
-    ctx.moveTo(x+w*.2,y+top);ctx.lineTo(x+w*.5,y+bot);ctx.lineTo(x+w*.8,y+top);ctx.stroke();}
-  if(type==="K"){V(h*.14,h*.86,shade(color,-55),lw+1.4);V(h*.14,h*.86,color,lw);}
-  else if(type==="T"){
-    V(h*.5,h*.88,shade(color,-55),lw*.8+1.2);V(h*.5,h*.88,color,lw*.8);
+    ctx.moveTo(x+w*.2,y+top);ctx.lineTo(x+w*.5,y+bot);ctx.lineTo(x+w*.8,y+top);ctx.stroke();
+  }
+  if(type==="K"){
+    V(h*.14,h*.86,shade(color,-55),lw+1.4);
+    V(h*.14,h*.86,color,lw);
+  } else if(type==="T"){
+    V(h*.5,h*.88,shade(color,-55),lw*.8+1.2);
+    V(h*.5,h*.88,color,lw*.8);
     ctx.strokeStyle=shade(color,-55);ctx.lineWidth=lw*.55+1.2;
     ctx.beginPath();ctx.moveTo(x+w*.14,y+h*.26);ctx.lineTo(x+w*.86,y+h*.26);ctx.stroke();
     ctx.strokeStyle=color;ctx.lineWidth=lw*.55;
@@ -541,12 +1187,19 @@ function drawLoop(ctx,x,y,w,h,color,type){
     ctx.beginPath();ctx.moveTo(x+1,y+h*.5);ctx.lineTo(x+w-1,y+h*.5);ctx.stroke();ctx.restore();
   }
 }
+
 function drawCell(ctx,x,y,w,h,color,type){
   var pad=1;ctx.fillStyle=cssVar("--surface2");ctx.fillRect(x+pad,y+pad,w-pad*2,h-pad*2);
   if(type==="K"){ctx.fillStyle=color;ctx.fillRect(x+pad,y+pad,w-pad*2,h-pad*2);}
-  else if(type==="T"){ctx.fillStyle=color;ctx.fillRect(x+pad,y+pad,w-pad*2,(h-pad*2)*.45);
-    ctx.globalAlpha=.35;ctx.fillRect(x+pad,y+pad+(h-pad*2)*.45,w-pad*2,(h-pad*2)*.55);ctx.globalAlpha=1;}
+  else if(type==="T"){
+    ctx.fillStyle=color;ctx.fillRect(x+pad,y+pad,w-pad*2,(h-pad*2)*.45);
+    ctx.globalAlpha=.35;ctx.fillRect(x+pad,y+pad+(h-pad*2)*.45,w-pad*2,(h-pad*2)*.55);ctx.globalAlpha=1;
+  }
 }
+
+/* ── Live Canvas Drawing ───────────────────────────── */
+var canvasLayoutInfo={W:0,H:0,mg:32,tp:16,cw:16,chh:16,cols:[],total:36};
+
 function draw(){
   var cv=$("cv"),ctx=cv.getContext("2d");
   var model=build(),total=totalCourses();S.upto=clamp(S.upto,1,total);
@@ -554,24 +1207,32 @@ function draw(){
   if(S.view==="face")cols=model.filter(function(m){return m.cyl;});
   else if(S.view==="back")cols=model.filter(function(m){return m.dial;});
   else cols=model;
+
   var mg=32,tp=16,ww=$("wrap").clientWidth-24;
   var n=Math.max(1,cols.length);
-  var base=clamp(Math.floor((ww-mg)/n),11,28);
+  var base=clamp(Math.floor((ww-mg)/n),11,32);
   var cw=Math.round(base*S.zoom),mm=S.view==="map";
   var chh=mm?Math.round(cw*1.5):Math.round(cw*.85);
   var W=mg+n*cw+2,H=total*chh+tp+4;
   var dpr=window.devicePixelRatio||1;
+
+  canvasLayoutInfo={W:W,H:H,mg:mg,tp:tp,cw:cw,chh:chh,cols:cols,total:total};
+
   cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+"px";cv.style.height=H+"px";
   ctx.setTransform(dpr,0,0,dpr,0,tp*dpr);
-  ctx.fillStyle=cssVar("--surface2")||(document.documentElement.getAttribute("data-theme")==="dark"?"#1a2232":"#f8fafd");
+
+  ctx.fillStyle=cssVar("--surface2")||"#f8fafc";
   ctx.fillRect(0,-tp,W,H+tp);
+
   ctx.strokeStyle=cssVar("--border");ctx.lineWidth=.7;
   for(var r=0;r<=total;r++){var yy=r*chh+.5;ctx.beginPath();ctx.moveTo(mg,yy);ctx.lineTo(W,yy);ctx.stroke();}
+
   var acc=cssVar("--brand");
   ctx.font="bold 9.5px Inter,sans-serif";ctx.textBaseline="middle";
+
   for(var c=0;c<S.upto;c++){
     var f=c%S.F,cam=S.cams[f],y=(total-1-c)*chh;
-    if(S.upto<total&&c===S.upto-1){ctx.save();ctx.globalAlpha=.12;ctx.fillStyle=acc;ctx.fillRect(mg,y,W-mg,chh);ctx.restore();}
+    if(S.upto<total&&c===S.upto-1){ctx.save();ctx.globalAlpha=.14;ctx.fillStyle=acc;ctx.fillRect(mg,y,W-mg,chh);ctx.restore();}
     ctx.fillStyle=cssVar("--text3");ctx.textAlign="right";ctx.fillText("F"+(f+1),mg-5,y+chh/2);
     for(var i=0;i<cols.length;i++){
       var m=cols[i],x=mg+i*cw;
@@ -585,6 +1246,7 @@ function draw(){
       }
     }
   }
+
   var rw=repeatWidth(model);
   if(rw>0){
     var k=cols.filter(function(m){return m.p<rw;}).length;
@@ -592,14 +1254,58 @@ function draw(){
       var bx=mg+1,by=(total-S.F)*chh+1,bw=k*cw-2,bh=S.F*chh-2;
       ctx.save();ctx.setLineDash([5,4]);ctx.strokeStyle=acc;ctx.lineWidth=1.8;ctx.strokeRect(bx,by,bw,bh);
       ctx.setLineDash([]);ctx.fillStyle=acc;ctx.font="700 10px Inter,sans-serif";
-      ctx.textAlign="left";ctx.textBaseline="bottom";ctx.fillText("১ রিপিট",bx+2,by-2);ctx.restore();
+      ctx.textAlign="left";ctx.textBaseline="bottom";ctx.fillText("১ রিপিট ("+k+"×"+S.F+")",bx+2,by-2);ctx.restore();
+      $("badgeRepeat").textContent="রিপিট: "+S.F+" কোর্স × "+k+" ওয়েল";
+      $("hudRepeat").textContent=k+"×"+S.F;
     }
   }
-  var hints={face:"সামনের দিক: সিলিন্ডার লুপ। নিচ থেকে উপরে কোর্স বাড়ছে।",
-    back:"পেছনের দিক: ডায়াল লুপ। ফাঁকা ঘর = মিস।",
-    map:"সুই-ম্যাপ: উপরে ডায়াল, নিচে সিলিন্ডার। পূর্ণ=নিট, অর্ধেক=টাক।"};
-  $("viewHint").textContent=hints[S.view];updateNow();
+
+  var hints={
+    face:"সামনের দিক (Cylinder Loops): নিচ থেকে উপরে কোর্স বাড়ছে।",
+    back:"পেছনের দিক (Dial Loops): ডায়াল সুইয়ের লুপ। ফাঁকা ঘর = মিস।",
+    map:"সুই-ম্যাপ (CAD Mode): উপরে ডায়াল, নিচে সিলিন্ডার।"
+  };
+  $("viewHint").textContent=hints[S.view];
+  updateNow();
+  updateHUD(model);
 }
+
+/* ── HUD & Specs Computation ───────────────────────── */
+function updateHUD(model){
+  $("hudCourses").textContent=totalCourses();
+  $("hudWales").textContent=S.wales;
+
+  var totalLoops=0,countK=0,countT=0,countM=0;
+  var cols=model.filter(function(m){return m.cyl||m.dial;});
+  S.cams.forEach(function(cam){
+    cols.forEach(function(m){
+      var vC=m.cyl?action(cam,"cyl",m.cyl):null;
+      var vD=m.dial?action(cam,"dial",m.dial):null;
+      [vC,vD].forEach(function(v){
+        if(v){
+          totalLoops++;
+          if(v==="K")countK++;
+          else if(v==="T")countT++;
+          else countM++;
+        }
+      });
+    });
+  });
+
+  var pctK=totalLoops?Math.round((countK/totalLoops)*100):0;
+  var pctT=totalLoops?Math.round((countT/totalLoops)*100):0;
+  var pctM=totalLoops?Math.max(0,100-pctK-pctT):0;
+
+  $("barK").style.width=pctK+"%"; $("valK").textContent=pctK+"%";
+  $("barT").style.width=pctT+"%"; $("valT").textContent=pctT+"%";
+  $("barM").style.width=pctM+"%"; $("valM").textContent=pctM+"%";
+
+  var typeText="Rib ("+S.layout+")";
+  if(S.layout==="B")typeText="Interlock (B)";
+  else if(S.layout==="CD"&&pctT>10)typeText="Tuck Rib";
+  $("badgeType").textContent="টাইপ: "+typeText;
+}
+
 function updateNow(){
   var total=totalCourses(),c=S.upto-1,f=c%S.F,cam=S.cams[f];
   var model=build(),sets=presentSets(model),g={K:[],T:[],M:[]};
@@ -608,9 +1314,14 @@ function updateNow(){
   if(g.K.length)parts.push("নিট: "+g.K.join(", "));
   if(g.T.length)parts.push("টাক: "+g.T.join(", "));
   if(g.M.length)parts.push("মিস: "+g.M.join(", "));
-  $("now").textContent="কোর্স "+S.upto+"/"+total+" · ফিডার "+(f+1)+(cam.label?" ("+cam.label+")":"")+" → "+parts.join(" | ");
+
+  $("now").innerHTML="<span><b>কোর্স "+S.upto+"/"+total+"</b> · ফিডার "+(f+1)+(cam.label?" ("+cam.label+")":"")+"</span><span style='font-size:11px;opacity:0.85'>"+parts.join(" | ")+"</span>";
   var up=$("upto");up.max=total;up.value=S.upto;
+
+  var rows=document.querySelectorAll("#camBody tr");
+  rows.forEach(function(r,idx){r.classList.toggle("tr-active",idx===f);});
 }
+
 function longestRun(seq,val){
   var k=seq.indexOf("K");if(k<0)return seq.length;
   var best=0,cur=0;
@@ -623,19 +1334,21 @@ function analyze(){
     var seq=S.cams.map(function(c){return c[s.key];});
     if(seq.indexOf("K")<0)list.push(s.name+" সেটের সুই কোনো ফিডারে নিট করে না।");
     else{
-      if(longestRun(seq,"T")>=3)list.push(s.name+" সেটে টানা ৩+ টাক — সুতা ছিঁড়তে পারে।");
-      if(longestRun(seq,"M")>=6)list.push(s.name+" সেটে ৬+ মিস — ভাসা সুতা হতে পারে।");
-    }});
+      if(longestRun(seq,"T")>=3)list.push(s.name+" সেটে টানা ৩+ টাক — অতিরিক্ত সুতার টেনশনে ছিঁড়তে পারে।");
+      if(longestRun(seq,"M")>=6)list.push(s.name+" সেটে ৬+ মিস — লম্বা ভাসা সুতা হতে পারে।");
+    }
+  });
   var ul=$("warn");ul.innerHTML="";var li;
-  if(!list.length){li=document.createElement("li");li.className="ok";li.textContent="কোনো সমস্যা ধরা পড়েনি।";ul.appendChild(li);}
+  if(!list.length){li=document.createElement("li");li.className="ok";li.textContent="কোনো প্রযুক্তিগত ঝুঁকি ধরা পড়েনি। ডিজাইন নিরাপদ।";ul.appendChild(li);}
   else list.forEach(function(t){li=document.createElement("li");li.textContent=t;ul.appendChild(li);});
   return sets.map(function(s){return s.key;});
 }
+
 function symFor(set,v){return(set.bed==="dial"&&S.mirror)?SYM_D[v]:SYM[v];}
 function renderLegend(){
   $("legend").innerHTML=S.mirror
-    ?"<span class='li'><b>∧</b>সিলিন্ডারে নিট</span><span class='li'><b>∨</b>ডায়ালে নিট</span><span class='li'><b>—</b>মিস</span><span class='li' style='color:var(--brand);font-size:11px'>ঘরে চাপ দিলে বদলাবে</span>"
-    :"<span class='li'><b>∧</b>নিট</span><span class='li'><b>∨</b>টাক</span><span class='li'><b>—</b>মিস</span><span class='li' style='color:var(--brand);font-size:11px'>ঘরে চাপ দিলে বদলাবে</span>";
+    ?"<span class='li'><b>∧</b>সিলিন্ডারে নিট</span><span class='li'><b>∨</b>ডায়ালে নিট</span><span class='li'><b>—</b>মিস</span><span class='li' style='color:var(--brand);font-size:11px'>ঘরে ক্লিক করলে ঘুরবে</span>"
+    :"<span class='li'><b>∧</b>নিট</span><span class='li'><b>∨</b>টাক</span><span class='li'><b>—</b>মিস</span><span class='li' style='color:var(--brand);font-size:11px'>ঘরে ক্লিক করলে ঘুরবে</span>";
 }
 function renderInfo(){
   var i=INFO[S.preset]||INFO.custom;
@@ -645,6 +1358,8 @@ function renderInfo(){
   if(i.note)h+="<div class='inote'>"+i.note+"</div>";
   $("infoBody").innerHTML=h;
 }
+
+/* ── Cam Matrix Builder ────────────────────────────── */
 function buildTable(){
   var present=analyze();var body=$("camBody");body.innerHTML="";
   S.cams.forEach(function(cam,i){
@@ -662,12 +1377,17 @@ function buildTable(){
       b.textContent=symFor(s,cam[s.key]);
       if(present.indexOf(s.key)<0)b.classList.add("off");
       b.addEventListener("click",function(){
+        playTick(650, 0.02);
         cam[s.key]=NEXT[cam[s.key]];b.dataset.v=cam[s.key];b.textContent=symFor(s,cam[s.key]);
-        markCustom();analyze();draw();});
-      cell.appendChild(b);tr.appendChild(cell);});
-    body.appendChild(tr);});
+        markCustom();analyze();draw();
+      });
+      cell.appendChild(b);tr.appendChild(cell);
+    });
+    body.appendChild(tr);
+  });
   SETS.forEach(function(s){$(s.head).classList.toggle("off",present.indexOf(s.key)<0);});
 }
+
 function markCustom(){if(S.preset!=="custom"){S.preset="custom";$("preset").value="custom";renderInfo();}}
 function syncControls(){
   $("fVal").textContent=S.F;$("rVal").textContent=S.rounds;$("wVal").textContent=S.wales;
@@ -679,6 +1399,33 @@ function sanitize(v,allowed,fallback){
   v=(v||"").toUpperCase().split("").filter(function(c){return allowed.indexOf(c)>=0;}).join("");
   return v||fallback;
 }
+
+/* ── Interactive Column Header Toggling ────────────── */
+SETS.forEach(function(s){
+  var el=$(s.head);
+  if(el){
+    el.addEventListener("click",function(){
+      var firstVal=S.cams[0][s.key];
+      var nextVal=NEXT[firstVal];
+      S.cams.forEach(function(cam){cam[s.key]=nextVal;});
+      playTick(800, 0.03);
+      markCustom();refresh(true);
+      showToast(s.name+" এর সব ক্যাম '"+symFor(s,nextVal)+"' এ সেট হয়েছে");
+    });
+  }
+});
+
+/* ── Batch Actions ─────────────────────────────────── */
+$("allKnitBtn").addEventListener("click",function(){
+  S.cams.forEach(function(cam){SETS.forEach(function(s){cam[s.key]="K";});});
+  playTick(900, 0.03);markCustom();refresh(true);showToast("সব ক্যাম নিট (∧) এ সেট হয়েছে");
+});
+$("allMissBtn").addEventListener("click",function(){
+  S.cams.forEach(function(cam){SETS.forEach(function(s){cam[s.key]="M";});});
+  playTick(400, 0.03);markCustom();refresh(true);showToast("সব ক্যাম মিস (—) এ সেট হয়েছে");
+});
+
+/* ── Step-by-Step Playback ─────────────────────────── */
 function stopPlay(){
   if(timer){clearInterval(timer);timer=null;}
   $("playIcon").textContent="▶";$("playLabel").textContent="ধাপে ধাপে";
@@ -688,23 +1435,102 @@ function startPlay(){
   $("playIcon").textContent="⏸";$("playLabel").textContent="থামান";draw();
   timer=setInterval(function(){
     if(S.upto>=totalCourses()){stopPlay();return;}
-    S.upto++;draw();if(S.upto>=totalCourses())stopPlay();},320);
+    S.upto++;playTick(750, 0.015);draw();
+    if(S.upto>=totalCourses())stopPlay();
+  },S.speed);
 }
+
+$("play").addEventListener("click",function(){if(timer)stopPlay();else startPlay();});
+$("stepPrev").addEventListener("click",function(){stopPlay();S.upto=clamp(S.upto-1,1,totalCourses());playTick(600,0.015);draw();});
+$("stepNext").addEventListener("click",function(){stopPlay();S.upto=clamp(S.upto+1,1,totalCourses());playTick(700,0.015);draw();});
+
 function exportPNG(){
-  var link=document.createElement("a");link.download="knitsim.png";link.href=$("cv").toDataURL("image/png");link.click();
+  var link=document.createElement("a");link.download="knitsim-fabric-"+S.preset+".png";
+  link.href=$("cv").toDataURL("image/png");link.click();
+  showToast("PNG ইমেজ ডাউনলোড সম্পন্ন হয়েছে");
 }
+
+/* ── Interactive Canvas Tooltip Inspector ──────────── */
+var cv=$("cv"), inspectBox=$("canvasInspect");
+cv.addEventListener("mousemove",function(e){
+  var info=canvasLayoutInfo;
+  if(!info.W||!info.cols.length)return;
+  var rect=cv.getBoundingClientRect();
+  var scaleX=info.W/rect.width, scaleY=info.H/rect.height;
+  var canvasX=(e.clientX-rect.left)*scaleX;
+  var canvasY=(e.clientY-rect.top)*scaleY-info.tp;
+
+  var colIdx=Math.floor((canvasX-info.mg)/info.cw);
+  var courseIdx=info.total-1-Math.floor(canvasY/info.chh);
+
+  if(colIdx>=0&&colIdx<info.cols.length&&courseIdx>=0&&courseIdx<info.total){
+    var m=info.cols[colIdx];
+    var f=courseIdx%S.F, cam=S.cams[f];
+    var act="—";
+    if(S.view==="face"&&m.cyl)act=action(cam,"cyl",m.cyl);
+    else if(S.view==="back"&&m.dial)act=action(cam,"dial",m.dial);
+    else if(S.view==="map")act="D:"+(m.dial?action(cam,"dial",m.dial):"")+" C:"+(m.cyl?action(cam,"cyl",m.cyl):"");
+    var actName=act==="K"?"নিট (∧)":act==="T"?"টাক (∨)":"মিস (—)";
+
+    inspectBox.textContent="কোর্স "+(courseIdx+1)+" (F"+(f+1)+") · ওয়েল "+(m.p+1)+" ("+(m.ch==="C"?"সিলিন্ডার":"ডায়াল")+") → "+actName;
+    inspectBox.classList.add("show");
+  } else {
+    inspectBox.classList.remove("show");
+  }
+});
+cv.addEventListener("mouseleave",function(){inspectBox.classList.remove("show");});
+
+/* ── Theme Toggle ──────────────────────────────────── */
 (function(){
   var html=document.documentElement,btn=$("themeBtn");
   function isDark(){return html.getAttribute("data-theme")==="dark";}
   function apply(){btn.textContent=isDark()?"☀️":"🌙";}
-  btn.addEventListener("click",function(){html.setAttribute("data-theme",isDark()?"light":"dark");apply();setTimeout(draw,50);});
+  btn.addEventListener("click",function(){
+    var nowDark=isDark();
+    html.setAttribute("data-theme",nowDark?"light":"dark");
+    apply();setTimeout(draw,40);
+    showToast(nowDark?"লাইট থিম চালু":"ডার্ক থিম চালু");
+  });
   if(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)html.setAttribute("data-theme","dark");
   apply();
 })();
-$("play").addEventListener("click",function(){if(timer)stopPlay();else startPlay();});
+
+/* ── Sound Toggle ──────────────────────────────────── */
+$("soundBtn").addEventListener("click",function(){
+  S.sound=!S.sound;
+  this.textContent=S.sound?"🔊":"🔇";
+  showToast(S.sound?"শব্দ ইফেক্ট অন":"শব্দ ইফেক্ট অফ");
+});
+
+/* ── Shortcuts Modal ───────────────────────────────── */
+$("kbdBtn").addEventListener("click",function(){$("modalOverlay").classList.add("open");});
+$("modalClose").addEventListener("click",function(){$("modalOverlay").classList.remove("open");});
+$("modalOverlay").addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});
+
+/* ── Global Keyboard Shortcuts ─────────────────────── */
+window.addEventListener("keydown",function(e){
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT")return;
+  if(e.code==="Space"){e.preventDefault();if(timer)stopPlay();else startPlay();}
+  else if(e.key==="1"){selectView("face");}
+  else if(e.key==="2"){selectView("back");}
+  else if(e.key==="3"){selectView("map");}
+  else if(e.key==="ArrowLeft"){stopPlay();S.upto=clamp(S.upto-1,1,totalCourses());draw();}
+  else if(e.key==="ArrowRight"){stopPlay();S.upto=clamp(S.upto+1,1,totalCourses());draw();}
+  else if(e.key==="d"||e.key==="D"){$("themeBtn").click();}
+  else if(e.key==="e"||e.key==="E"){exportPNG();}
+  else if(e.key==="Escape"){$("modalOverlay").classList.remove("open");stopPlay();}
+});
+
+function selectView(v){
+  S.view=v;
+  document.querySelectorAll(".vtab").forEach(function(o){o.setAttribute("aria-pressed",o.dataset.view===v?"true":"false");});
+  draw();
+}
+
 $("exportBtn").addEventListener("click",exportPNG);
 $("upto").addEventListener("input",function(){stopPlay();S.upto=parseInt(this.value,10);draw();});
 $("zoom").addEventListener("change",function(){S.zoom=parseFloat(this.value);draw();});
+$("speed").addEventListener("change",function(){S.speed=parseInt(this.value,10);if(timer){stopPlay();startPlay();}});
 $("preset").addEventListener("change",function(){var v=this.value;if(v==="custom"){S.preset="custom";renderInfo();return;}loadPreset(v);renderInfo();refresh(true);});
 $("fMinus").addEventListener("click",function(){setFeeders(S.F-1);markCustom();resetUpto();refresh(true);});
 $("fPlus").addEventListener("click",function(){setFeeders(S.F+1);markCustom();resetUpto();refresh(true);});
@@ -716,16 +1542,17 @@ $("layout").addEventListener("change",function(){S.layout=sanitize(this.value,"C
 $("cylButt").addEventListener("change",function(){S.cylButt=sanitize(this.value,"123","1");markCustom();refresh(true);});
 $("dialButt").addEventListener("change",function(){S.dialButt=sanitize(this.value,"12","1");markCustom();refresh(true);});
 $("mirror").addEventListener("change",function(){S.mirror=this.checked;refresh(true);});
-$("sameColor").addEventListener("click",function(){var c=S.cams[0].color;S.cams.forEach(function(x){x.color=c;});refresh(true);});
-$("stripeColor").addEventListener("click",function(){S.cams.forEach(function(x,i){x.color=PALETTE[i%PALETTE.length];});refresh(true);});
+$("sameColor").addEventListener("click",function(){var c=S.cams[0].color;S.cams.forEach(function(x){x.color=c;});refresh(true);showToast("সব ফিডারে প্রথম সুতার রঙ প্রয়োগ হয়েছে");});
+$("stripeColor").addEventListener("click",function(){S.cams.forEach(function(x,i){x.color=PALETTE[i%PALETTE.length];});refresh(true);showToast("স্ট্রাইপ রঙ প্যালেট প্রয়োগ হয়েছে");});
+
 document.querySelectorAll(".vtab").forEach(function(t){
-  t.addEventListener("click",function(){
-    S.view=t.dataset.view;
-    document.querySelectorAll(".vtab").forEach(function(o){o.setAttribute("aria-pressed",o===t?"true":"false");});
-    draw();});});
+  t.addEventListener("click",function(){selectView(t.dataset.view);});
+});
+
 var rt;window.addEventListener("resize",function(){clearTimeout(rt);rt=setTimeout(draw,120);});
 if(window.matchMedia){var mq=window.matchMedia("(prefers-color-scheme: dark)");if(mq.addEventListener)mq.addEventListener("change",draw);}
 new MutationObserver(function(){draw();}).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+
 loadPreset("sheet");renderInfo();refresh(true);
 })();
 </script>
