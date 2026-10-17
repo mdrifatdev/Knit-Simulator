@@ -1,1126 +1,710 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="bn" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="নিটিং ক্যাম সিমুলেটর — প্রতিটি ফিডারে ক্যাম বসান, ফেব্রিকের ডিজাইন সঙ্গে সঙ্গে দেখুন।">
-<title>নিটিং ক্যাম সিমুলেটর</title>
+<meta name="description" content="KnitSim - ইন্টারেক্টিভ সার্কুলার নিটিং ক্যাম সিমুলেটর">
+<title>KnitSim - নিটিং ক্যাম সিমুলেটর</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
 <style>
-/* ── Design tokens ─────────────────────────────── */
-:root {
-  --bg: #f0f2f7;
-  --bg2: #e4e8f0;
-  --card: #ffffff;
-  --card-alt: #f8faff;
-  --ink: #1a1e2e;
-  --ink2: #2d3348;
-  --mute: #5c6680;
-  --line: #d4daea;
-  --line2: #c2cad8;
-  --accent: #4f52c0;
-  --accent2: #6c6fd6;
-  --accent3: #8b8ef0;
-  --accent-ink: #ffffff;
-  --fabric: #f3f5fb;
-  --grid: #dde3ef;
-  --k: #dde8ff;
-  --k2: #c5d5ff;
-  --t: #fff0d4;
-  --t2: #ffd99a;
-  --m: #eaecf3;
-  --danger: #e05252;
-  --success: #2db87a;
-  --header-grad: linear-gradient(135deg, #3b3f9a 0%, #5c5fd4 50%, #7c6fee 100%);
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-  --shadow-md: 0 4px 16px rgba(50,60,120,.10), 0 1px 4px rgba(0,0,0,.06);
-  --shadow-lg: 0 8px 32px rgba(50,60,120,.14), 0 2px 8px rgba(0,0,0,.08);
-  --radius: 14px;
-  --radius-sm: 9px;
-  --radius-xs: 6px;
-  --transition: 0.18s cubic-bezier(.4,0,.2,1);
+:root{
+  --bg:#f1f4f9;--surface:#fff;--surface2:#f8fafd;--surface3:#eef1f7;
+  --border:#e0e5ef;--text:#111827;--text2:#374151;--text3:#6b7280;--text4:#9ca3af;
+  --brand:#4338ca;--brand-h:#3730a3;--brand-l:#6366f1;--brand-ll:#a5b4fc;
+  --brand-bg:#eef2ff;--brand-fg:#fff;
+  --knit-bg:#dbeafe;--knit-bd:#93c5fd;--knit-t:#1d4ed8;
+  --tuck-bg:#fef3c7;--tuck-bd:#fcd34d;--tuck-t:#92400e;
+  --miss-bg:#f3f4f6;--miss-bd:#d1d5db;--miss-t:#6b7280;
+  --ok-bg:#d1fae5;--ok-bd:#6ee7b7;--ok-t:#065f46;
+  --warn-bg:#fff7ed;--warn-bd:#fdba74;--warn-t:#9a3412;
+  --nav-bg:#1e1b4b;--nav-bd:rgba(255,255,255,.08);--nav-mute:rgba(255,255,255,.45);
+  --shsm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shmd:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.05);
+  --r:8px;--rlg:14px;--dur:.15s;--ease:cubic-bezier(.4,0,.2,1);
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0e1118;
-    --bg2: #161b25;
-    --card: #171d29;
-    --card-alt: #1c2333;
-    --ink: #e8ecf5;
-    --ink2: #cdd4e8;
-    --mute: #8893b0;
-    --line: #252e42;
-    --line2: #2e3a52;
-    --accent: #7c80f5;
-    --accent2: #9598f7;
-    --accent3: #ababf9;
-    --accent-ink: #0e1118;
-    --fabric: #111621;
-    --grid: #1e2738;
-    --k: #1e2d5a;
-    --k2: #162248;
-    --t: #3d2d0c;
-    --t2: #5a3e08;
-    --m: #1a2030;
-    --danger: #ff6b6b;
-    --success: #3dd68c;
-    --header-grad: linear-gradient(135deg, #1c1f6b 0%, #2e3190 50%, #4843b8 100%);
-    --shadow-sm: 0 1px 3px rgba(0,0,0,.3);
-    --shadow-md: 0 4px 16px rgba(0,0,0,.3);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,.4);
-  }
+[data-theme="dark"]{
+  --bg:#0a0d14;--surface:#111827;--surface2:#1a2232;--surface3:#1f2d40;
+  --border:#1e2d42;--text:#f0f4ff;--text2:#c9d4f0;--text3:#7b8db0;--text4:#4a5b78;
+  --brand:#818cf8;--brand-h:#6366f1;--brand-l:#a5b4fc;--brand-ll:#c7d2fe;
+  --brand-bg:#1e1b4b;--brand-fg:#0a0d14;
+  --knit-bg:#1e3a5f;--knit-bd:#2563eb;--knit-t:#93c5fd;
+  --tuck-bg:#451a03;--tuck-bd:#d97706;--tuck-t:#fcd34d;
+  --miss-bg:#1f2937;--miss-bd:#374151;--miss-t:#6b7280;
+  --ok-bg:#064e3b;--ok-bd:#059669;--ok-t:#6ee7b7;
+  --warn-bg:#431407;--warn-bd:#c2410c;--warn-t:#fdba74;
+  --nav-bg:#0f0c29;
+  --shsm:0 1px 3px rgba(0,0,0,.35),0 1px 2px rgba(0,0,0,.25);
+  --shmd:0 4px 6px rgba(0,0,0,.3),0 2px 4px rgba(0,0,0,.2);
 }
-:root[data-theme="dark"] {
-  --bg: #0e1118;
-  --bg2: #161b25;
-  --card: #171d29;
-  --card-alt: #1c2333;
-  --ink: #e8ecf5;
-  --ink2: #cdd4e8;
-  --mute: #8893b0;
-  --line: #252e42;
-  --line2: #2e3a52;
-  --accent: #7c80f5;
-  --accent2: #9598f7;
-  --accent3: #ababf9;
-  --accent-ink: #0e1118;
-  --fabric: #111621;
-  --grid: #1e2738;
-  --k: #1e2d5a;
-  --k2: #162248;
-  --t: #3d2d0c;
-  --t2: #5a3e08;
-  --m: #1a2030;
-  --danger: #ff6b6b;
-  --success: #3dd68c;
-  --header-grad: linear-gradient(135deg, #1c1f6b 0%, #2e3190 50%, #4843b8 100%);
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.3);
-  --shadow-md: 0 4px 16px rgba(0,0,0,.3);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,.4);
-}
-:root[data-theme="light"] {
-  --bg: #f0f2f7;
-  --bg2: #e4e8f0;
-  --card: #ffffff;
-  --card-alt: #f8faff;
-  --ink: #1a1e2e;
-  --ink2: #2d3348;
-  --mute: #5c6680;
-  --line: #d4daea;
-  --line2: #c2cad8;
-  --accent: #4f52c0;
-  --accent2: #6c6fd6;
-  --accent3: #8b8ef0;
-  --accent-ink: #ffffff;
-  --fabric: #f3f5fb;
-  --grid: #dde3ef;
-  --k: #dde8ff;
-  --k2: #c5d5ff;
-  --t: #fff0d4;
-  --t2: #ffd99a;
-  --m: #eaecf3;
-  --danger: #e05252;
-  --success: #2db87a;
-  --header-grad: linear-gradient(135deg, #3b3f9a 0%, #5c5fd4 50%, #7c6fee 100%);
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-  --shadow-md: 0 4px 16px rgba(50,60,120,.10), 0 1px 4px rgba(0,0,0,.06);
-  --shadow-lg: 0 8px 32px rgba(50,60,120,.14), 0 2px 8px rgba(0,0,0,.08);
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;scroll-behavior:smooth}
+body{font-family:"Hind Siliguri","Noto Sans Bengali","Inter",system-ui,sans-serif;
+  font-size:14px;line-height:1.6;color:var(--text);background:var(--bg);
+  min-height:100vh;display:flex;flex-direction:column;
+  transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
+button{font:inherit;cursor:pointer;border:0;background:none}
+input,select{font:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
 
-/* ── Reset & Base ───────────────────────────────── */
-html { scroll-padding-top: env(safe-area-inset-top, 0px); }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: "Hind Siliguri", "Noto Sans Bengali", "Inter", system-ui, sans-serif;
-  font-size: 15px;
-  line-height: 1.6;
-  min-height: 100vh;
-  transition: background var(--transition), color var(--transition);
-}
+/* NAV */
+.nav{background:var(--nav-bg);border-bottom:1px solid var(--nav-bd);
+  position:sticky;top:0;z-index:100;box-shadow:var(--shmd)}
+.nav-i{max-width:1200px;margin:0 auto;padding:0 20px;height:56px;
+  display:flex;align-items:center;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.logo-ic{width:32px;height:32px;background:linear-gradient(135deg,var(--brand-l),var(--brand));
+  border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:16px;
+  box-shadow:0 2px 8px rgba(99,102,241,.4)}
+.logo-nm{font-weight:700;font-size:16px;color:#fff;letter-spacing:-.3px}
+.logo-sub{font-size:10px;color:var(--nav-mute);letter-spacing:.3px;text-transform:uppercase}
+.nav-sp{flex:1}
+.nav-badge{background:rgba(99,102,241,.2);color:var(--brand-ll);
+  border:1px solid rgba(99,102,241,.3);border-radius:9999px;
+  padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:.3px}
+.nav-btn{width:36px;height:36px;border-radius:var(--r);border:1px solid var(--nav-bd);
+  background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background var(--dur),transform var(--dur)}
+.nav-btn:hover{background:rgba(255,255,255,.2);transform:scale(1.05)}
+.nav-btn:active{transform:scale(.94)}
 
-/* ── Header ─────────────────────────────────────── */
-.site-header {
-  background: var(--header-grad);
-  padding: 0;
-  position: relative;
-  overflow: hidden;
-}
-.site-header::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
-  pointer-events: none;
-}
-.header-inner {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 22px 16px 20px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  position: relative;
-  z-index: 1;
-}
-.header-text h1 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #fff;
-  margin: 0 0 4px;
-  letter-spacing: -0.3px;
-  text-shadow: 0 1px 8px rgba(0,0,0,.25);
-}
-.header-text .sub {
-  color: rgba(255,255,255,.75);
-  font-size: 13.5px;
-  margin: 0;
-  font-weight: 400;
-}
-.header-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; padding-top: 4px; }
+/* LAYOUT */
+.wrap{max-width:1200px;margin:0 auto;width:100%;padding:24px 20px 56px;flex:1}
+.hero{margin-bottom:22px}
+.hero h1{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.4px;margin-bottom:4px}
+.hero p{color:var(--text3);font-size:13.5px}
+.two{display:grid;grid-template-columns:330px 1fr;gap:18px;align-items:start}
+.lc,.rc{display:flex;flex-direction:column;gap:16px}
 
-/* Theme Toggle */
-#themeBtn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255,255,255,.3);
-  background: rgba(255,255,255,.12);
-  color: #fff;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  backdrop-filter: blur(6px);
-  transition: background var(--transition), transform var(--transition), border-color var(--transition);
-  line-height: 1;
-}
-#themeBtn:hover { background: rgba(255,255,255,.24); border-color: rgba(255,255,255,.55); transform: rotate(20deg) scale(1.1); }
-#themeBtn:active { transform: rotate(20deg) scale(0.95); }
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);
+  box-shadow:var(--shsm);transition:box-shadow var(--dur);overflow:hidden}
+.card:hover{box-shadow:var(--shmd)}
+.ch{padding:13px 18px 11px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px}
+.cstep{width:24px;height:24px;border-radius:9999px;background:var(--brand);
+  color:var(--brand-fg);font-size:11px;font-weight:700;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0}
+.ctitle{font-size:12px;font-weight:700;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.7px}
+.cb{padding:16px 18px}
 
-/* ── Layout ─────────────────────────────────────── */
-main { max-width: 960px; margin: 0 auto; padding: 18px 12px 48px; }
+/* FIELDS */
+.fl{display:flex;flex-direction:column;gap:5px}
+.flbl{font-size:11px;font-weight:600;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.6px}
+.frow{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+select,input[type=text]{color:var(--text);background:var(--surface2);
+  border:1.5px solid var(--border);border-radius:var(--r);
+  padding:8px 12px;height:38px;font-size:13.5px;
+  transition:border-color var(--dur),box-shadow var(--dur);outline:none;width:100%}
+select:focus,input[type=text]:focus{border-color:var(--brand);
+  box-shadow:0 0 0 3px rgba(99,102,241,.14);background:var(--surface)}
+input[type=text]{width:84px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
 
-/* ── Cards ──────────────────────────────────────── */
-section {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 14px;
-  box-shadow: var(--shadow-sm);
-  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
-}
-section:hover { box-shadow: var(--shadow-md); }
-h2 {
-  font-size: 14px;
-  font-weight: 700;
-  margin: 0 0 14px;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-h2::before {
-  content: '';
-  display: inline-block;
-  width: 3px;
-  height: 14px;
-  background: var(--accent);
-  border-radius: 3px;
-  flex-shrink: 0;
-}
+/* STEPPER */
+.stp{display:flex;align-items:center;border:1.5px solid var(--border);
+  border-radius:var(--r);overflow:hidden;background:var(--surface2);height:38px}
+.stp button{width:36px;height:100%;background:transparent;color:var(--text2);
+  font-size:18px;transition:background var(--dur),color var(--dur);
+  border-right:1px solid var(--border)}
+.stp button:last-child{border-right:0;border-left:1px solid var(--border)}
+.stp button:hover{background:var(--brand);color:#fff}
+.stp span{flex:1;text-align:center;font-weight:700;font-size:14px;color:var(--text);min-width:30px}
 
-/* ── Form Controls ──────────────────────────────── */
-.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
-label.f { display: flex; flex-direction: column; gap: 5px; font-size: 12px; font-weight: 600; color: var(--mute); text-transform: uppercase; letter-spacing: .5px; }
-select, input[type=text] {
-  font: inherit;
-  color: var(--ink);
-  background: var(--fabric);
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: 8px 12px;
-  min-height: 40px;
-  transition: border-color var(--transition), box-shadow var(--transition);
-  outline: none;
-  font-size: 14px;
-}
-select:focus, input[type=text]:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(79,82,192,.15);
-}
-input[type=text] { width: 110px; letter-spacing: .12em; text-transform: uppercase; }
-.step {
-  display: flex;
-  align-items: center;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  background: var(--fabric);
-  box-shadow: var(--shadow-sm);
-}
-.step button {
-  width: 38px;
-  height: 38px;
-  border: 0;
-  background: transparent;
-  color: var(--ink);
-  font-size: 20px;
-  cursor: pointer;
-  transition: background var(--transition), color var(--transition);
-  font-weight: 500;
-}
-.step button:hover { background: var(--accent); color: var(--accent-ink); }
-.step span { min-width: 36px; text-align: center; font-weight: 700; font-size: 15px; }
-button { font: inherit; cursor: pointer; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* TOGGLE */
+.toggle{display:flex;align-items:center;gap:8px;padding:8px 10px;
+  border:1.5px solid var(--border);border-radius:var(--r);background:var(--surface2);
+  cursor:pointer;font-size:13px;color:var(--text2);font-weight:500;
+  transition:border-color var(--dur);user-select:none}
+.toggle:hover{border-color:var(--brand)}
+.toggle input[type=checkbox]{accent-color:var(--brand);width:15px;height:15px}
+.hint{font-size:12px;color:var(--text3);line-height:1.6;margin-top:4px}
+.hint b{color:var(--brand);font-weight:600}
 
-/* ── Tabs ───────────────────────────────────────── */
-.tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
-.tab {
-  border: 1.5px solid var(--line);
-  background: var(--fabric);
-  color: var(--mute);
-  padding: 7px 16px;
-  border-radius: 999px;
-  font-size: 13.5px;
-  font-weight: 600;
-  transition: all var(--transition);
-  box-shadow: var(--shadow-sm);
-}
-.tab:hover { border-color: var(--accent); color: var(--accent); background: var(--card); }
-.tab[aria-pressed="true"] {
-  background: var(--accent);
-  color: var(--accent-ink);
-  border-color: var(--accent);
-  box-shadow: 0 2px 10px rgba(79,82,192,.35);
-}
+/* INFO PANEL */
+.infop details summary{cursor:pointer;list-style:none;display:flex;
+  align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--text);padding:4px 0}
+.infop details summary::before{content:'';width:6px;height:6px;
+  border-right:2px solid var(--brand);border-bottom:2px solid var(--brand);
+  transform:rotate(-45deg);display:inline-block;flex-shrink:0;
+  transition:transform var(--dur);margin-top:1px}
+.infop details[open] summary::before{transform:rotate(45deg);margin-top:-2px}
+.infop details p{font-size:13px;color:var(--text2);line-height:1.7;margin-top:10px}
+.infop details b{color:var(--brand);font-weight:600}
+.inote{margin-top:12px;padding:10px 12px;background:var(--warn-bg);
+  border:1px solid var(--warn-bd);border-radius:var(--r);
+  font-size:12px;color:var(--warn-t);line-height:1.65}
 
-/* ── Hints ──────────────────────────────────────── */
-.hint { font-size: 13px; color: var(--mute); margin: 10px 0 0; line-height: 1.6; }
+/* CAM TABLE */
+.tscroll{overflow-x:auto;border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;min-width:480px}
+thead th{padding:8px 8px 10px;text-align:center;font-size:10.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.6px;color:var(--text3);
+  background:var(--surface);border-bottom:2px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background var(--dur)}
+tbody tr:last-child{border-bottom:0}
+tbody tr:hover{background:var(--surface2)}
+td{padding:6px 8px;text-align:center;vertical-align:middle}
+td.fn{font-size:11px;font-weight:700;color:var(--text4);width:36px}
+td.yc{text-align:left;min-width:130px}
+td.yc .yl{display:block;font-size:11px;color:var(--text3);line-height:1.4;margin-top:2px}
+td input[type=color]{width:32px;height:28px;border:1.5px solid var(--border);
+  border-radius:4px;padding:1px;background:var(--surface2);cursor:pointer;
+  transition:box-shadow var(--dur)}
+td input[type=color]:hover{box-shadow:0 0 0 3px rgba(99,102,241,.2)}
 
-/* ── Table ──────────────────────────────────────── */
-.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius-sm); }
-table { border-collapse: collapse; width: 100%; min-width: 520px; }
-th, td { padding: 6px 7px; text-align: center; font-size: 13px; }
-th {
-  color: var(--mute);
-  font-weight: 700;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: .5px;
-  position: sticky;
-  top: 0;
-  background: var(--card);
-  padding-bottom: 8px;
-}
-tbody tr {
-  border-top: 1px solid var(--line);
-  transition: background var(--transition);
-}
-tbody tr:hover { background: var(--card-alt); }
-td.fd { font-weight: 700; color: var(--mute); font-size: 12px; }
-td.yn { text-align: left; min-width: 150px; }
-td.yn .lb { display: block; font-size: 11px; color: var(--mute); line-height: 1.35; margin-top: 3px; }
-td input[type=color] {
-  width: 36px;
-  height: 32px;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-xs);
-  padding: 2px;
-  background: var(--fabric);
-  cursor: pointer;
-  transition: box-shadow var(--transition);
-}
-td input[type=color]:hover { box-shadow: 0 0 0 3px rgba(79,82,192,.2); }
+/* CAM BUTTONS */
+.cb2{width:42px;height:36px;border:1.5px solid var(--miss-bd);border-radius:6px;
+  font-size:17px;font-weight:700;background:var(--miss-bg);color:var(--miss-t);
+  transition:all var(--dur);box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.cb2:hover{transform:translateY(-1px);box-shadow:var(--shsm)}
+.cb2:active{transform:scale(.9);box-shadow:none}
+.cb2[data-v="K"]{background:var(--knit-bg);border-color:var(--knit-bd);color:var(--knit-t);
+  box-shadow:0 2px 6px rgba(37,99,235,.18)}
+.cb2[data-v="T"]{background:var(--tuck-bg);border-color:var(--tuck-bd);color:var(--tuck-t);
+  box-shadow:0 2px 6px rgba(217,119,6,.18)}
+.cb2.off{opacity:.24;filter:grayscale(.6);box-shadow:none}
 
-/* ── Cam Buttons ────────────────────────────────── */
-.cam {
-  width: 46px;
-  height: 38px;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-sm);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--ink);
-  background: var(--m);
-  transition: all var(--transition);
-  box-shadow: var(--shadow-sm);
-  position: relative;
-  overflow: hidden;
-}
-.cam::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0);
-  transition: background var(--transition);
-}
-.cam:hover::after { background: rgba(255,255,255,.15); }
-.cam:active { transform: scale(0.92); box-shadow: none; }
-.cam[data-v="K"] {
-  background: var(--k);
-  border-color: var(--k2);
-  color: #2a4a9e;
-  box-shadow: 0 2px 8px rgba(79,130,255,.18);
-}
-.cam[data-v="T"] {
-  background: var(--t);
-  border-color: var(--t2);
-  color: #8a5a00;
-  box-shadow: 0 2px 8px rgba(210,140,0,.18);
-}
-.cam[data-v="M"] { background: var(--m); color: var(--mute); border-color: var(--line); }
-:root[data-theme="dark"] .cam[data-v="K"],
-:root:not([data-theme="light"]) .cam[data-v="K"] { color: #90b4ff; }
-:root[data-theme="dark"] .cam[data-v="T"],
-:root:not([data-theme="light"]) .cam[data-v="T"] { color: #f4b84a; }
-.off { opacity: .28; filter: saturate(.4); }
+/* LEGEND */
+.lgnd{display:flex;flex-wrap:wrap;gap:12px;padding:10px 14px;
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px}
+.li{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--text3)}
+.li b{font-size:15px;color:var(--text)}
 
-/* ── Legend ─────────────────────────────────────── */
-.legend {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  font-size: 13px;
-  color: var(--mute);
-  margin: 0 0 10px;
-  padding: 10px 14px;
-  background: var(--card-alt);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-}
-.legend b { color: var(--ink); font-size: 17px; margin-right: 4px; }
+/* ACTIONS */
+.ta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.bg{border:1.5px solid var(--border);background:var(--surface);color:var(--text2);
+  border-radius:var(--r);padding:6px 14px;font-size:12.5px;font-weight:600;
+  transition:all var(--dur);white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.bg:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-bg);box-shadow:var(--shsm)}
+.bg:active{transform:scale(.97)}
 
-/* ── Canvas Wrap ────────────────────────────────── */
-.canvaswrap {
-  background: var(--fabric);
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: 10px;
-  overflow-x: auto;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,.05);
-}
-canvas { display: block; }
+/* VIEW TABS */
+.vtabs{display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:3px;margin-bottom:14px;width:fit-content}
+.vtab{border-radius:6px;padding:6px 16px;font-size:12.5px;font-weight:600;
+  color:var(--text3);background:transparent;border:0;transition:all var(--dur);white-space:nowrap}
+.vtab:hover{color:var(--text)}
+.vtab[aria-pressed="true"]{background:var(--surface);color:var(--brand);
+  box-shadow:var(--shsm);border:1px solid var(--border)}
 
-/* ── Warnings ───────────────────────────────────── */
-.warn { margin: 12px 0 0; padding: 0; list-style: none; font-size: 13.5px; }
-.warn li {
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  background: var(--t);
-  border: 1px solid var(--t2);
-  margin-top: 8px;
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  line-height: 1.5;
-}
-.warn li::before { content: '⚠️'; flex-shrink: 0; }
-.ok {
-  background: var(--k) !important;
-  border-color: var(--k2) !important;
-  color: var(--ink) !important;
-}
-.ok::before { content: '✅' !important; }
+/* PLAYBACK */
+.pb{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bplay{border:0;background:var(--brand);color:#fff;border-radius:var(--r);
+  padding:8px 20px;height:40px;font-weight:700;font-size:13px;
+  box-shadow:0 2px 10px rgba(99,102,241,.38);transition:all var(--dur);
+  white-space:nowrap;display:flex;align-items:center;gap:6px}
+.bplay:hover{background:var(--brand-h);transform:translateY(-1px);
+  box-shadow:0 4px 16px rgba(99,102,241,.48)}
+.bplay:active{transform:translateY(0)}
+input[type=range]{flex:1;height:4px;accent-color:var(--brand);cursor:pointer;min-width:60px}
 
-/* ── Misc Buttons ───────────────────────────────── */
-.mini {
-  border: 1.5px solid var(--line);
-  background: var(--fabric);
-  color: var(--ink);
-  border-radius: var(--radius-sm);
-  padding: 7px 14px;
-  min-height: 38px;
-  font-size: 13.5px;
-  font-weight: 500;
-  transition: all var(--transition);
-  box-shadow: var(--shadow-sm);
-}
-.mini:hover { border-color: var(--accent); color: var(--accent); background: var(--card); box-shadow: var(--shadow-md); }
-.mini:active { transform: scale(0.97); }
+/* STATUS */
+.stat{padding:8px 14px;background:var(--brand-bg);border:1px solid var(--brand-ll);
+  border-radius:var(--r);font-size:12.5px;color:var(--brand);font-weight:500;
+  margin-bottom:14px;line-height:1.5}
+[data-theme="dark"] .stat{background:rgba(99,102,241,.12);
+  border-color:rgba(99,102,241,.3);color:var(--brand-ll)}
 
-/* ── Info Block ─────────────────────────────────── */
-details.info summary {
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 15.5px;
-  list-style: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--ink);
-}
-details.info summary::before { content: '▶'; font-size: 11px; color: var(--accent); transition: transform var(--transition); }
-details[open].info summary::before { transform: rotate(90deg); }
-details.info p { margin: 10px 0 0; font-size: 14px; color: var(--ink2); line-height: 1.65; }
-details.info b { color: var(--accent); }
-.note {
-  background: var(--t);
-  border: 1px solid var(--t2);
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  margin-top: 12px;
-  line-height: 1.6;
-  color: var(--ink2);
-}
+/* TOOLS */
+.tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.ssm{height:34px;padding:4px 10px;font-size:13px;border:1.5px solid var(--border);
+  border-radius:var(--r);background:var(--surface2);color:var(--text);width:auto;cursor:pointer}
+.ssm:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(99,102,241,.14)}
 
-/* ── Stepper / Play ─────────────────────────────── */
-.stepper { display: flex; gap: 10px; align-items: center; margin: 0 0 10px; }
-.stepper input[type=range] {
-  flex: 1;
-  min-width: 80px;
-  accent-color: var(--accent);
-  height: 5px;
-  cursor: pointer;
-}
-.play {
-  border: 0;
-  background: var(--accent);
-  color: var(--accent-ink);
-  border-radius: var(--radius-sm);
-  padding: 8px 18px;
-  min-height: 40px;
-  white-space: nowrap;
-  font-weight: 700;
-  font-size: 14px;
-  box-shadow: 0 3px 12px rgba(79,82,192,.4);
-  transition: all var(--transition);
-  letter-spacing: .2px;
-}
-.play:hover { background: var(--accent2); box-shadow: 0 4px 18px rgba(79,82,192,.5); transform: translateY(-1px); }
-.play:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(79,82,192,.3); }
+/* CANVAS */
+.cw{background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;
+  padding:12px;overflow-x:auto;box-shadow:inset 0 2px 8px rgba(0,0,0,.04)}
+canvas{display:block}
 
-/* ── Now Status Bar ─────────────────────────────── */
-.now {
-  font-size: 13.5px;
-  margin: 6px 0 12px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  background: var(--k);
-  border: 1px solid var(--k2);
-  color: var(--ink);
-  font-weight: 500;
-  box-shadow: var(--shadow-sm);
-  line-height: 1.5;
-}
+/* WARNINGS */
+.wl{list-style:none;margin-top:14px;display:flex;flex-direction:column;gap:6px}
+.wl li{display:flex;align-items:flex-start;gap:8px;padding:10px 14px;
+  border-radius:var(--r);background:var(--warn-bg);border:1px solid var(--warn-bd);
+  color:var(--warn-t);font-size:13px;line-height:1.55}
+.wl li::before{content:"⚠";flex-shrink:0}
+.wl li.ok{background:var(--ok-bg);border-color:var(--ok-bd);color:var(--ok-t)}
+.wl li.ok::before{content:"✓";font-weight:700}
 
-/* ── Tools bar ──────────────────────────────────── */
-.tools { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+/* FOOTER */
+.ft{border-top:1px solid var(--border);padding:16px 20px;max-width:1200px;margin:0 auto;width:100%}
+.fn2{font-size:12px;color:var(--text4);line-height:1.6}
+.fn2 b{color:var(--text3);font-weight:600}
 
-/* ── Footer hint ────────────────────────────────── */
-.footer-hint {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 12px 32px;
-  font-size: 12.5px;
-  color: var(--mute);
-  line-height: 1.65;
-  border-top: 1px solid var(--line);
-  padding-top: 16px;
-  margin-top: 4px;
-}
+/* ANIMATIONS */
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:fu .22s var(--ease) both}
+.lc .card:nth-child(1){animation-delay:.04s}
+.lc .card:nth-child(2){animation-delay:.08s}
+.rc .card:nth-child(1){animation-delay:.06s}
+.rc .card:nth-child(2){animation-delay:.10s}
 
-/* ── Animations ─────────────────────────────────── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-section { animation: fadeUp .3s ease both; }
-section:nth-child(1) { animation-delay: .05s; }
-section:nth-child(2) { animation-delay: .1s; }
-section:nth-child(3) { animation-delay: .15s; }
-section:nth-child(4) { animation-delay: .2s; }
-
-/* ── Responsive ─────────────────────────────────── */
-@media (max-width: 600px) {
-  .header-text h1 { font-size: 20px; }
-  main { padding: 14px 10px 40px; }
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+@media(max-width:600px){
+  .wrap{padding:14px 12px 40px}
+  .nav-i{padding:0 14px}
+  .nav-badge{display:none}
 }
 </style>
 </head>
 <body>
-<header class="site-header">
-  <div class="header-inner">
-    <div class="header-text">
-      <h1>🧵 নিটিং ক্যাম সিমুলেটর</h1>
-      <p class="sub">প্রতিটি ফিডারে ক্যাম বসান — ফেব্রিকের ডিজাইন সঙ্গে সঙ্গে দেখুন।</p>
+
+<nav class="nav">
+  <div class="nav-i">
+    <a class="logo" href="#">
+      <div class="logo-ic">🧵</div>
+      <div>
+        <div class="logo-nm">KnitSim</div>
+        <div class="logo-sub">CAM Simulator</div>
+      </div>
+    </a>
+    <div class="nav-sp"></div>
+    <span class="nav-badge">v2.0</span>
+    <button class="nav-btn" id="exportBtn" title="PNG হিসেবে ডাউনলোড">⬇</button>
+    <button class="nav-btn" id="themeBtn" title="থিম পরিবর্তন">🌙</button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>নিটিং ক্যাম সিমুলেটর</h1>
+    <p>প্রতিটি ফিডারে ক্যাম সাজান, রিয়েল-টাইমে ফেব্রিকের গঠন দেখুন</p>
+  </div>
+
+  <div class="two">
+    <div class="lc">
+
+      <div class="card">
+        <div class="ch">
+          <div class="cstep">১</div>
+          <span class="ctitle">মেশিন সেটআপ</span>
+        </div>
+        <div class="cb">
+          <div class="fl" style="margin-bottom:14px">
+            <label class="flbl" for="preset">ফেব্রিক প্রিসেট</label>
+            <select id="preset">
+              <option value="sheet">আপনার শিট (১৮ ফিডার)</option>
+              <option value="rib11">1×1 রিব</option>
+              <option value="rib22">2×2 রিব</option>
+              <option value="interlock">ইন্টারলক</option>
+              <option value="pique">পিকে</option>
+              <option value="waffle">ওয়াফল</option>
+              <option value="tuck">টাক ডিজাইন</option>
+              <option value="cardigan">ফুল কার্ডিগান</option>
+              <option value="custom">নিজের ডিজাইন</option>
+            </select>
+          </div>
+          <div class="frow" style="margin-bottom:14px">
+            <div class="fl"><label class="flbl">ফিডার</label>
+              <div class="stp"><button id="fMinus">−</button><span id="fVal"></span><button id="fPlus">+</button></div></div>
+            <div class="fl"><label class="flbl">রাউন্ড</label>
+              <div class="stp"><button id="rMinus">−</button><span id="rVal"></span><button id="rPlus">+</button></div></div>
+            <div class="fl"><label class="flbl">ওয়েল</label>
+              <div class="stp"><button id="wMinus">−</button><span id="wVal"></span><button id="wPlus">+</button></div></div>
+          </div>
+          <div class="frow" style="margin-bottom:14px">
+            <div class="fl"><label class="flbl" for="layout">সুই বিন্যাস</label>
+              <input type="text" id="layout" maxlength="12" autocapitalize="characters"></div>
+            <div class="fl"><label class="flbl" for="cylButt">সিলি. বাট</label>
+              <input type="text" id="cylButt" maxlength="6" inputmode="numeric"></div>
+            <div class="fl"><label class="flbl" for="dialButt">ডায়াল বাট</label>
+              <input type="text" id="dialButt" maxlength="6" inputmode="numeric"></div>
+          </div>
+          <p class="hint">বিন্যাস: <b>C</b>=সিলিন্ডার, <b>D</b>=ডায়াল, <b>B</b>=উভয়। বাট ইংরেজি সংখ্যায় (যেমন <b>123</b>)।</p>
+        </div>
+      </div>
+
+      <div class="card infop">
+        <div class="ch">
+          <div class="cstep" style="background:var(--surface3);color:var(--text3);font-size:14px">ℹ</div>
+          <span class="ctitle">ডিজাইন তথ্য</span>
+        </div>
+        <div class="cb">
+          <details open>
+            <summary id="infoTitle">এই ডিজাইনটা কী</summary>
+            <div id="infoBody"></div>
+          </details>
+        </div>
+      </div>
+
     </div>
-    <div class="header-actions">
-      <button id="themeBtn" aria-label="থিম পরিবর্তন করুন" title="থিম পরিবর্তন করুন">🌙</button>
+
+    <div class="rc">
+
+      <div class="card">
+        <div class="ch">
+          <div class="cstep">২</div>
+          <span class="ctitle">ক্যাম অ্যারেঞ্জমেন্ট</span>
+        </div>
+        <div class="cb">
+          <div class="lgnd" id="legend"></div>
+          <div class="tscroll">
+            <table>
+              <thead><tr>
+                <th>#</th><th>সুতা</th>
+                <th id="hD1">ডায়াল ১</th><th id="hD2">ডায়াল ২</th>
+                <th id="hC1">সিলি. ১</th><th id="hC2">সিলি. ২</th><th id="hC3">সিলি. ৩</th>
+              </tr></thead>
+              <tbody id="camBody"></tbody>
+            </table>
+          </div>
+          <div class="ta">
+            <button class="bg" id="sameColor">একই রঙ</button>
+            <button class="bg" id="stripeColor">স্ট্রাইপ রঙ</button>
+            <label class="toggle">
+              <input type="checkbox" id="mirror">
+              <span>ডায়ালে নিট = ∨</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ch">
+          <div class="cstep">৩</div>
+          <span class="ctitle">ফেব্রিক প্রিভিউ</span>
+        </div>
+        <div class="cb">
+          <div class="vtabs" role="group">
+            <button class="vtab" data-view="face" aria-pressed="true">সামনের দিক</button>
+            <button class="vtab" data-view="back" aria-pressed="false">পেছনের দিক</button>
+            <button class="vtab" data-view="map" aria-pressed="false">সুই-ম্যাপ</button>
+          </div>
+          <div class="pb">
+            <button class="bplay" id="play">
+              <span id="playIcon">▶</span>
+              <span id="playLabel">ধাপে ধাপে</span>
+            </button>
+            <input type="range" id="upto" min="1" max="36" value="36">
+          </div>
+          <div class="stat" id="now"></div>
+          <div class="tools">
+            <span class="flbl" style="margin:0;white-space:nowrap">আকার:</span>
+            <select class="ssm" id="zoom">
+              <option value="1">স্বাভাবিক</option>
+              <option value="1.6">বড়</option>
+              <option value="2.2">অনেক বড়</option>
+            </select>
+            <div style="flex:1"></div>
+            <p class="hint" id="viewHint" style="margin:0;font-size:11px;text-align:right;max-width:260px"></p>
+          </div>
+          <div class="cw" id="wrap"><canvas id="cv" role="img"></canvas></div>
+          <ul class="wl" id="warn"></ul>
+        </div>
+      </div>
+
     </div>
   </div>
-</header>
-<main>
-
-  <section>
-    <h2>১. মেশিন সেটআপ</h2>
-    <div class="row">
-      <label class="f">প্রিসেট
-        <select id="preset">
-          <option value="sheet">আপনার শিট (১৮ ফিডার)</option>
-          <option value="rib11">1×1 রিব</option>
-          <option value="rib22">2×2 রিব</option>
-          <option value="interlock">ইন্টারলক</option>
-          <option value="pique">পিকে</option>
-          <option value="waffle">ওয়াফল</option>
-          <option value="tuck">টাক ডিজাইন (র‍্যাপ্লে টাইপ)</option>
-          <option value="cardigan">ফুল কার্ডিগান</option>
-          <option value="custom">নিজের ডিজাইন</option>
-        </select>
-      </label>
-      <label class="f">ফিডার (রিপিট)
-        <div class="step"><button id="fMinus" aria-label="ফিডার কমান">−</button><span id="fVal"></span><button id="fPlus" aria-label="ফিডার বাড়ান">+</button></div>
-      </label>
-      <label class="f">রাউন্ড
-        <div class="step"><button id="rMinus" aria-label="রাউন্ড কমান">−</button><span id="rVal"></span><button id="rPlus" aria-label="রাউন্ড বাড়ান">+</button></div>
-      </label>
-      <label class="f">ওয়েল (সুই-অবস্থান)
-        <div class="step"><button id="wMinus" aria-label="ওয়েল কমান">−</button><span id="wVal"></span><button id="wPlus" aria-label="ওয়েল বাড়ান">+</button></div>
-      </label>
-    </div>
-    <div class="row" style="margin-top:10px">
-      <label class="f">সুই বিন্যাস
-        <input type="text" id="layout" maxlength="12" autocapitalize="characters" aria-describedby="layoutHelp">
-      </label>
-      <label class="f">সিলিন্ডার বাট
-        <input type="text" id="cylButt" maxlength="6" inputmode="numeric">
-      </label>
-      <label class="f">ডায়াল বাট
-        <input type="text" id="dialButt" maxlength="6" inputmode="numeric">
-      </label>
-    </div>
-    <p class="hint" id="layoutHelp">বিন্যাস: <b>C</b> = শুধু সিলিন্ডার সুই, <b>D</b> = শুধু ডায়াল সুই, <b>B</b> = দুটোই। বাট: সিলিন্ডারে ১, ২, ৩ আর ডায়ালে ১, ২ (শিটের "Needle" সারির মতো)। যেমন সিলিন্ডারে <b>123</b> লিখলে সুই পালা করে বাট ১, ২, ৩ বসে। এই প্যাটার্ন পুরো মেশিনে রিপিট হয়। বাট ইংরেজি সংখ্যা (1, 2, 3) দিয়ে লিখুন।</p>
-  </section>
-
-  <section>
-    <details class="info" open>
-      <summary id="infoTitle">এই ডিজাইনটা কী</summary>
-      <div id="infoBody"></div>
-    </details>
-  </section>
-
-  <section>
-    <h2>২. ক্যাম অ্যারেঞ্জমেন্ট</h2>
-    <p class="legend" id="legend"></p>
-    <div class="scroll">
-      <table>
-        <thead><tr><th>ফিডার</th><th>সুতা</th><th id="hD1">ডায়াল ১</th><th id="hD2">ডায়াল ২</th><th id="hC1">সিলি. ১</th><th id="hC2">সিলি. ২</th><th id="hC3">সিলি. ৩</th></tr></thead>
-        <tbody id="camBody"></tbody>
-      </table>
-    </div>
-    <div class="row" style="margin-top:10px">
-      <button class="mini" id="sameColor">সব ফিডারে প্রথম রঙ</button>
-      <button class="mini" id="stripeColor">ফিডার অনুযায়ী আলাদা রঙ</button>
-      <label class="mini" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="mirror"> ডায়ালে নিট = ∨ (শিটের মতো)</label>
-    </div>
-  </section>
-
-  <section>
-    <h2>৩. ফেব্রিক</h2>
-    <div class="tabs" role="group" aria-label="ভিউ">
-      <button class="tab" data-view="face" aria-pressed="true">সামনের দিক</button>
-      <button class="tab" data-view="back" aria-pressed="false">পেছনের দিক</button>
-      <button class="tab" data-view="map" aria-pressed="false">সুই-ম্যাপ</button>
-    </div>
-    <div class="stepper">
-      <button class="play" id="play">▶ ধাপে ধাপে</button>
-      <input type="range" id="upto" min="1" max="36" value="36" aria-label="কোর্স পর্যন্ত দেখান">
-    </div>
-    <div class="now" id="now"></div>
-    <div class="tools">
-      <label class="f" style="flex-direction:row;align-items:center;gap:8px">আকার
-        <select id="zoom">
-          <option value="1">স্বাভাবিক</option>
-          <option value="1.6">বড়</option>
-          <option value="2.2">অনেক বড়</option>
-        </select>
-      </label>
-    </div>
-    <div class="canvaswrap" id="wrap"><canvas id="cv" role="img" aria-label="ফেব্রিকের সিমুলেশন"></canvas></div>
-    <p class="hint" id="viewHint"></p>
-    <ul class="warn" id="warn"></ul>
-  </section>
-
-</main>
-<div class="footer-hint">
-  ⚠️ এটা ডিজাইন বোঝার টুল। সুতার টান, স্ট্রেচ বা GSM এখানে হিসাব হয় না। প্রিসেটগুলো সরলীকৃত — আসল কারখানার ক্যাম চার্ট মেশিন ব্র্যান্ড অনুযায়ী আলাদা হতে পারে।
 </div>
+
+<footer class="ft">
+  <p class="fn2"><b>⚠ বিজ্ঞপ্তি:</b> এটি ডিজাইন-বোঝার টুল। সুতার টান, স্ট্রেচ বা GSM হিসাব হয় না। প্রিসেটগুলো সরলীকৃত — আসল কারখানার ক্যাম চার্ট আলাদা হতে পারে।</p>
+</footer>
 
 <script>
 (function(){
 "use strict";
-var $ = function(id){ return document.getElementById(id); };
-var SYM = {K:"∧", T:"∨", M:"—"};
-var SYM_D = {K:"∨", T:"∧", M:"—"};
-var NEXT = {K:"T", T:"M", M:"K"};
-var BASE = "#3b6fb6";
-var PALETTE = ["#3b6fb6","#d9822b","#2f9e6d","#c44569","#7d5ba6","#2aa5b8","#b5a12a","#6b7280"];
-var SETS = [
-  {key:"d1", name:"ডায়াল ১", bed:"dial", butt:"1", head:"hD1"},
-  {key:"d2", name:"ডায়াল ২", bed:"dial", butt:"2", head:"hD2"},
-  {key:"c1", name:"সিলিন্ডার ১", bed:"cyl", butt:"1", head:"hC1"},
-  {key:"c2", name:"সিলিন্ডার ২", bed:"cyl", butt:"2", head:"hC2"},
-  {key:"c3", name:"সিলিন্ডার ৩", bed:"cyl", butt:"3", head:"hC3"}
+var $=function(id){return document.getElementById(id);};
+var SYM={K:"∧",T:"∨",M:"—"};
+var SYM_D={K:"∨",T:"∧",M:"—"};
+var NEXT={K:"T",T:"M",M:"K"};
+var BASE="#3b6fb6";
+var PALETTE=["#3b6fb6","#d9822b","#2f9e6d","#c44569","#7d5ba6","#2aa5b8","#b5a12a","#6b7280"];
+var SETS=[
+  {key:"d1",name:"ডায়াল ১",bed:"dial",butt:"1",head:"hD1"},
+  {key:"d2",name:"ডায়াল ২",bed:"dial",butt:"2",head:"hD2"},
+  {key:"c1",name:"সিলিন্ডার ১",bed:"cyl",butt:"1",head:"hC1"},
+  {key:"c2",name:"সিলিন্ডার ২",bed:"cyl",butt:"2",head:"hC2"},
+  {key:"c3",name:"সিলিন্ডার ৩",bed:"cyl",butt:"3",head:"hC3"}
 ];
-var ALL_K = ["K","K","K","K","K"];
-
-/* cam order per feeder: [dial1, dial2, cyl1, cyl2, cyl3] */
-var SHEET = [
-  "MMKMM","KMMMM","KMMKK","MMKMM","MKMMM","MKMKK",
+var ALL_K=["K","K","K","K","K"];
+var SHEET=["MMKMM","KMMMM","KMMKK","MMKMM","MKMMM","MKMKK",
   "MMMKM","KMMMM","KMKMK","MMMKM","MKMMM","MKKMK",
-  "MMMMK","KMMMM","KMKKM","MMMMK","MKMMM","MKKKM"
-].map(function(s){ return s.split(""); });
-var SHEET_YARN = [
-  {c:"#3b6fb6", l:"30/1 কটন · SL 1.95"},
-  {c:"#d9822b", l:"75D/36F পলি + 70D লাইক্রা · SL 1.95+1.00"},
-  {c:"#2f9e6d", l:"20/1 কটন · SL 3.95"}
-];
-
-var PRESETS = {
-  sheet:{ F:18, wales:36, layout:"CD", cyl:"123", dial:"12", mirror:true,
-    cams:SHEET,
-    colors:SHEET.map(function(_,i){ return SHEET_YARN[i%3].c; }),
-    labels:SHEET.map(function(_,i){ return SHEET_YARN[i%3].l; }) },
-  rib11:{ F:4, wales:24, layout:"CD", cyl:"1", dial:"1", mirror:false, cams:[ALL_K,ALL_K,ALL_K,ALL_K] },
-  rib22:{ F:4, wales:24, layout:"CCDD", cyl:"1", dial:"1", mirror:false, cams:[ALL_K,ALL_K,ALL_K,ALL_K] },
-  interlock:{ F:2, wales:24, layout:"B", cyl:"12", dial:"12", mirror:false,
-    cams:[["K","M","K","M","M"],["M","K","M","K","M"]] },
-  pique:{ F:4, wales:24, layout:"CD", cyl:"12", dial:"1", mirror:false,
-    cams:[["K","K","K","T","M"],["K","K","K","M","M"],["K","K","T","K","M"],["K","K","M","K","M"]] },
-  waffle:{ F:4, wales:24, layout:"CD", cyl:"12", dial:"12", mirror:false,
-    cams:[["K","T","K","T","M"],["K","T","K","T","M"],["T","K","T","K","M"],["T","K","T","K","M"]] },
-  tuck:{ F:4, wales:24, layout:"CD", cyl:"1", dial:"12", mirror:false,
-    cams:[["K","K","K","M","M"],["K","T","K","M","M"],["K","K","K","M","M"],["T","K","K","M","M"]] },
-  cardigan:{ F:2, wales:24, layout:"CD", cyl:"1", dial:"1", mirror:false,
-    cams:[["T","M","K","M","M"],["K","M","T","M","M"]] }
+  "MMMMK","KMMMM","KMKKM","MMMMK","MKMMM","MKKKM"].map(function(s){return s.split("");});
+var SY=[{c:"#3b6fb6",l:"30/1 কটন · SL 1.95"},{c:"#d9822b",l:"75D/36F পলি+লাইক্রা"},{c:"#2f9e6d",l:"20/1 কটন · SL 3.95"}];
+var PRESETS={
+  sheet:{F:18,wales:36,layout:"CD",cyl:"123",dial:"12",mirror:true,
+    cams:SHEET,colors:SHEET.map(function(_,i){return SY[i%3].c;}),labels:SHEET.map(function(_,i){return SY[i%3].l;})},
+  rib11:{F:4,wales:24,layout:"CD",cyl:"1",dial:"1",mirror:false,cams:[ALL_K,ALL_K,ALL_K,ALL_K]},
+  rib22:{F:4,wales:24,layout:"CCDD",cyl:"1",dial:"1",mirror:false,cams:[ALL_K,ALL_K,ALL_K,ALL_K]},
+  interlock:{F:2,wales:24,layout:"B",cyl:"12",dial:"12",mirror:false,cams:[["K","M","K","M","M"],["M","K","M","K","M"]]},
+  pique:{F:4,wales:24,layout:"CD",cyl:"12",dial:"1",mirror:false,
+    cams:[["K","K","K","T","M"],["K","K","K","M","M"],["K","K","T","K","M"],["K","K","M","K","M"]]},
+  waffle:{F:4,wales:24,layout:"CD",cyl:"12",dial:"12",mirror:false,
+    cams:[["K","T","K","T","M"],["K","T","K","T","M"],["T","K","T","K","M"],["T","K","T","K","M"]]},
+  tuck:{F:4,wales:24,layout:"CD",cyl:"1",dial:"12",mirror:false,
+    cams:[["K","K","K","M","M"],["K","T","K","M","M"],["K","K","K","M","M"],["T","K","K","M","M"]]},
+  cardigan:{F:2,wales:24,layout:"CD",cyl:"1",dial:"1",mirror:false,cams:[["T","M","K","M","M"],["K","M","T","M","M"]]}
 };
-
-var INFO = {
-  sheet:{ t:"আপনার শিট: ১৮ ফিডারের রিব ডিজাইন",
-    what:"38×18 মেশিন। সিলিন্ডারে ৩টা ট্র্যাক (বাট ১, ২, ৩), ডায়ালে ২টা (বাট ১, ২)। ৩ ফিডারের ইয়ার্ন-রিপিট ৬ বার চলে: ৩০/১ কটন, পলি+লাইক্রা, ২০/১ কটন।",
-    how:"প্রতিটি সুই সেট ১৮ ফিডারে মাত্র ৬ বার নিট করে, বাকি ফিডারে মিস। কোন সেট কোন ফিডারে নিট করে, সেটাই নকশা। পলি+লাইক্রা ফিডারে (২, ৫, ৮, ১১, ১৪, ১৭) শুধু ডায়াল নিট করে, সিলিন্ডার কখনো নয়।",
-    look:"সামনের দিকে (সিলিন্ডার) শুধু কটন দেখা যায়, লাইক্রা নয়। লাইক্রা পেছনে ডায়ালের লুপে থাকে, তাতেই স্ট্রেচ আসে। 'সুই-ম্যাপ' ভিউতে সব একসাথে দেখুন, আর 'ধাপে ধাপে' চালিয়ে দেখুন ফিডার ধরে ফেব্রিক কীভাবে গড়ে ওঠে।",
-    use:"৩৮০ GSM স্ট্রেচ রিব, ৮৯% কটন, ৮% পলিয়েস্টার, ৩% ইলাস্টেন।",
-    note:"ছবি থেকে পড়া। ডায়ালের সারিতে শুধু ∨ আছে, ∧ একবারও নেই, আর লাইক্রা শুধু ডায়ালে নিট হচ্ছে। তাই ডায়ালের ∨ কে নিট ধরেছি (উপরে টিক দেওয়া 'ডায়ালে নিট = ∨')। এটা আমার অনুমান, আসল শিটের সঙ্গে মিলিয়ে নিন। সিলিন্ডার ও ডায়ালের বাট ক্রম (১২৩ ও ১২) 'Needle' সারি থেকে ধরা, সুই বসানোর আসল ক্রম আলাদা হতে পারে।" },
-  rib11:{ t:"1×1 রিব",
-    what:"সিলিন্ডার ও ডায়ালের সুই পালা করে বসে। প্রতি ফিডারে সব সুই নিট করে।",
-    how:"কোনো টাক বা মিস নেই, তাই আলাদা নকশা তৈরি হয় না। ফেস ও ব্যাক ওয়েল ১টা করে পালা করে আসে।",
-    look:"সূক্ষ্ম রিব লাইন, সবচেয়ে বেশি আড়াআড়ি স্ট্রেচ।",
-    use:"কাফ, কলার, ফিটেড টি-শার্ট।" },
-  rib22:{ t:"2×2 রিব",
-    what:"সিলিন্ডারে ২টা, ডায়ালে ২টা, এভাবে সুই বসে (বিন্যাস CCDD)।",
-    how:"ক্যাম সব নিট, ঠিক 1×1-এর মতো। পার্থক্য আসে শুধু সুই বসানোর ধরন থেকে।",
-    look:"মোটা, স্পষ্ট রিব লাইন, ভালো রিকভারি।",
-    use:"কাফ, কলার, ফিটেড পোশাক।" },
-  interlock:{ t:"ইন্টারলক",
-    what:"প্রতি অবস্থানে সিলিন্ডার ও ডায়ালের সুই মুখোমুখি (বিন্যাস B)। বাট ১ ও ২ পালা করে বসে।",
-    how:"ফিডার ১ শুধু বাট-১ সুই নিট করায়, ফিডার ২ বাট-২ সুই। দুই ফিডার মিলে ১টা পূর্ণ কোর্স হয়।",
-    look:"দুই পাশই মসৃণ ও ঘন। ফিডারে আলাদা রঙ দিলে খাড়া ডোরা দেখা যাবে।",
-    use:"টি-শার্ট, আন্ডারগার্মেন্টস, বেবি ওয়্যার।" },
-  pique:{ t:"পিকে",
-    what:"রিব বিন্যাসে সিলিন্ডারের সুই বাট ১, ২ পালা করে বসে। ডায়াল সব সময় নিট।",
-    how:"৪ ফিডারে সিলিন্ডারের বাট-১ ও বাট-২ পালা করে টাক ও মিস করে। এতে সামনে উঁচু-নিচু কোষ তৈরি হয়।",
-    look:"সামনে ছোট হীরা বা মৌচাকের মতো টেক্সচার, পেছনে মসৃণ।",
-    use:"পোলো শার্ট, স্পোর্টস ওয়্যার।" },
-  waffle:{ t:"ওয়াফল",
-    what:"রিব বিন্যাসে দুই দিকেই বাট ১, ২। এক সেট যখন নিট করে, অন্য সেট তখন টাক করে।",
-    how:"৪ ফিডারের রিপিটে বাট-১ সুই ২ কোর্স নিট করে, তারপর ২ কোর্স টাক। বাট-২ ঠিক উল্টো। দুই সেটের লুপের উচ্চতা আলাদা হয়ে ঘরের মতো কোষ তৈরি হয়।",
-    look:"দুই পাশেই চেকার বা মৌচাকের মতো উঁচু-নিচু টেক্সচার। ফেব্রিক মোটা ও ভারী।",
-    use:"সোয়েটার টাইপ ফেব্রিক, শীতের পোশাক।" },
-  tuck:{ t:"টাক ডিজাইন (র‍্যাপ্লে টাইপ)",
-    what:"1×1 রিব বিন্যাস। সিলিন্ডার সব সময় নিট, শুধু ডায়ালের বাট-১ ও বাট-২ পালা করে টাক করে।",
-    how:"৪ ফিডারের মধ্যে ফিডার ২-এ ডায়াল ২ টাক করে, ফিডার ৪-এ ডায়াল ১। টাক করা সুই লুপ ধরে রাখে, পরের কোর্সে দুই লুপ একসাথে নিট হয়।",
-    look:"সামনের দিক প্রায় সাধারণ রিবের মতো, পেছনে ছোট ছোট উঁচু ফোঁটার টেক্সচার।",
-    use:"টেক্সচারড টি-শার্ট, হালকা সোয়েটার।" },
-  cardigan:{ t:"ফুল কার্ডিগান",
-    what:"1×1 রিব বিন্যাস। প্রতিটি সুই এক কোর্সে নিট করে, পরের কোর্সে টাক।",
-    how:"ফিডার ১-এ সিলিন্ডার নিট ও ডায়াল টাক, ফিডার ২-এ উল্টো। দুই কোর্স মিলে প্রতি সুই ১টা লম্বা লুপ তৈরি করে।",
-    look:"দুই পাশ একই রকম, মোটা, ঘন ও স্থিতিশীল। রিবের চেয়ে কম স্ট্রেচ।",
-    use:"কার্ডিগান, জ্যাকেট, ভারী ফেব্রিক।" },
-  custom:{ t:"নিজের ডিজাইন",
-    what:"এখানে আপনি নিজে ক্যাম বসিয়ে ডিজাইন বানাচ্ছেন।",
-    how:"ক্যামের ঘরে চাপ দিলে ∧ (নিট), ∨ (টাক), — (মিস) ঘুরবে। সুই বিন্যাস ও বাট বদলে নিডল সেটআপও বদলানো যায়।",
-    look:"নিচের 'ফেব্রিক' অংশে ফল দেখুন। বক্স দিয়ে ঘেরা অংশটা একটা রিপিট।",
-    use:"" }
+var INFO={
+  sheet:{t:"আপনার শিট: ১৮ ফিডারের রিব ডিজাইন",
+    what:"38×18 মেশিন। সিলিন্ডারে ৩টা ট্র্যাক (বাট ১,২,৩), ডায়ালে ২টা। ৩ ফিডারের ইয়ার্ন-রিপিট ৬ বার।",
+    how:"প্রতিটি সুই সেট ১৮ ফিডারে মাত্র ৬ বার নিট করে, বাকিতে মিস। পলি+লাইক্রা ফিডারে শুধু ডায়াল নিট করে।",
+    look:"সামনে শুধু কটন দেখা যায়। লাইক্রা পেছনে ডায়ালের লুপে থাকে, তাতেই স্ট্রেচ আসে।",
+    use:"৩৮০ GSM স্ট্রেচ রিব, ৮৯% কটন, ৮% পলি, ৩% ইলাস্টেন।",
+    note:"ছবি থেকে পড়া — আসল শিটের সঙ্গে মিলিয়ে নিন।"},
+  rib11:{t:"1×1 রিব",what:"সিলিন্ডার ও ডায়ালের সুই পালা করে বসে।",how:"কোনো টাক বা মিস নেই।",look:"সূক্ষ্ম রিব লাইন, বেশি স্ট্রেচ।",use:"কাফ, কলার, ফিটেড টি-শার্ট।"},
+  rib22:{t:"2×2 রিব",what:"CCDD বিন্যাসে সুই বসে।",how:"ক্যাম সব নিট। পার্থক্য সুই বসানোর ধরন থেকে।",look:"মোটা, স্পষ্ট রিব।",use:"কাফ, কলার।"},
+  interlock:{t:"ইন্টারলক",what:"বিন্যাস B, বাট ১ ও ২ পালা করে।",how:"ফিডার ১ বাট-১, ফিডার ২ বাট-২ নিট করায়।",look:"দুই পাশই মসৃণ।",use:"টি-শার্ট, আন্ডারগার্মেন্টস।"},
+  pique:{t:"পিকে",what:"রিব বিন্যাস, সিলিন্ডার বাট ১-২ পালা করে।",how:"২ বাট পালা টাক ও মিস করে।",look:"হীরা বা মৌচাকের টেক্সচার।",use:"পোলো, স্পোর্টস।"},
+  waffle:{t:"ওয়াফল",what:"রিব বিন্যাস, দুই দিকে বাট ১-২।",how:"বাট-১ ২ কোর্স নিট, তারপর ২ কোর্স টাক।",look:"উঁচু-নিচু চেকার টেক্সচার।",use:"শীতের পোশাক।"},
+  tuck:{t:"টাক ডিজাইন",what:"1×1 রিব, সিলিন্ডার সব নিট, ডায়াল পালা টাক।",how:"ফিডার ২-এ ডায়াল ২ টাক, ফিডার ৪-এ ডায়াল ১।",look:"পেছনে ফোঁটার টেক্সচার।",use:"টেক্সচারড টি-শার্ট।"},
+  cardigan:{t:"ফুল কার্ডিগান",what:"1×1 রিব, এক কোর্স নিট, পরের কোর্স টাক।",how:"ফিডার ১-এ সিলিন্ডার নিট, ডায়াল টাক; ফিডার ২-এ উল্টো।",look:"দুই পাশ এক রকম, মোটা।",use:"কার্ডিগান, জ্যাকেট।"},
+  custom:{t:"নিজের ডিজাইন",what:"আপনি নিজে ক্যাম বসিয়ে ডিজাইন বানাচ্ছেন।",how:"ঘরে চাপ দিলে ∧ (নিট), ∨ (টাক), — (মিস) ঘুরবে।",look:"ফেব্রিক প্রিভিউতে ফল দেখুন।",use:""}
 };
-
-var S = { preset:"sheet", F:18, rounds:2, wales:36, layout:"CD", cylButt:"123", dialButt:"12",
-          view:"face", cams:[], mirror:true, upto:36, zoom:1 };
-var timer = null;
-
-function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
-function totalCourses(){ return S.F * S.rounds; }
-function resetUpto(){ stopPlay(); S.upto = totalCourses(); }
-
+var S={preset:"sheet",F:18,rounds:2,wales:36,layout:"CD",cylButt:"123",dialButt:"12",
+       view:"face",cams:[],mirror:true,upto:36,zoom:1};
+var timer=null;
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function totalCourses(){return S.F*S.rounds;}
+function resetUpto(){stopPlay();S.upto=totalCourses();}
 function loadPreset(name){
-  var p = PRESETS[name]; if(!p) return;
-  S.preset = name;
-  S.F = p.F; S.layout = p.layout; S.cylButt = p.cyl; S.dialButt = p.dial; S.mirror = p.mirror; S.wales = p.wales;
-  S.cams = p.cams.map(function(c,i){
-    return { d1:c[0], d2:c[1], c1:c[2], c2:c[3], c3:c[4],
-             color: p.colors ? p.colors[i] : BASE, label: p.labels ? p.labels[i] : "" };
-  });
-  S.rounds = Math.max(2, Math.round(28 / S.F));
-  resetUpto();
+  var p=PRESETS[name];if(!p)return;
+  S.preset=name;S.F=p.F;S.layout=p.layout;S.cylButt=p.cyl;
+  S.dialButt=p.dial;S.mirror=p.mirror;S.wales=p.wales;
+  S.cams=p.cams.map(function(c,i){
+    return{d1:c[0],d2:c[1],c1:c[2],c2:c[3],c3:c[4],
+           color:p.colors?p.colors[i]:BASE,label:p.labels?p.labels[i]:""};});
+  S.rounds=Math.max(2,Math.round(28/S.F));resetUpto();
 }
-
 function setFeeders(n){
-  n = clamp(n,1,18);
-  while(S.cams.length < n){
-    var l = S.cams[S.cams.length-1] || {d1:"K",d2:"K",c1:"K",c2:"K",c3:"K",color:BASE,label:""};
-    S.cams.push({d1:l.d1,d2:l.d2,c1:l.c1,c2:l.c2,c3:l.c3,color:l.color,label:""});
-  }
-  S.cams.length = n; S.F = n;
+  n=clamp(n,1,18);
+  while(S.cams.length<n){
+    var l=S.cams[S.cams.length-1]||{d1:"K",d2:"K",c1:"K",c2:"K",c3:"K",color:BASE,label:""};
+    S.cams.push({d1:l.d1,d2:l.d2,c1:l.c1,c2:l.c2,c3:l.c3,color:l.color,label:""});}
+  S.cams.length=n;S.F=n;
 }
-
-/* --- Needle model --- */
 function build(){
-  var out = [], ci = 0, di = 0;
+  var out=[],ci=0,di=0;
   for(var p=0;p<S.wales;p++){
-    var ch = S.layout.charAt(p % S.layout.length);
-    var o = { p:p, ch:ch, cyl:null, dial:null };
-    if(ch==="C" || ch==="B"){ o.cyl = S.cylButt.charAt(ci % S.cylButt.length); ci++; }
-    if(ch==="D" || ch==="B"){ o.dial = S.dialButt.charAt(di % S.dialButt.length); di++; }
-    out.push(o);
-  }
-  return out;
+    var ch=S.layout.charAt(p%S.layout.length);
+    var o={p:p,ch:ch,cyl:null,dial:null};
+    if(ch==="C"||ch==="B"){o.cyl=S.cylButt.charAt(ci%S.cylButt.length);ci++;}
+    if(ch==="D"||ch==="B"){o.dial=S.dialButt.charAt(di%S.dialButt.length);di++;}
+    out.push(o);}return out;
 }
-function action(cam, bed, butt){
-  return cam[(bed==="cyl" ? "c" : "d") + butt] || "M";
-}
-function presentSets(model){
-  return SETS.filter(function(s){
-    return model.some(function(m){ return m[s.bed]===s.butt; });
-  });
-}
+function action(cam,bed,butt){return cam[(bed==="cyl"?"c":"d")+butt]||"M";}
+function presentSets(model){return SETS.filter(function(s){return model.some(function(m){return m[s.bed]===s.butt;});});}
 function repeatWidth(model){
-  var L = S.layout.length;
-  for(var w=L; w<=model.length; w+=L){
-    var ok = true;
+  var L=S.layout.length;
+  for(var w=L;w<=model.length;w+=L){
+    var ok=true;
     for(var p=0;p+w<model.length;p++){
-      var a = model[p], b = model[p+w];
-      if(a.ch!==b.ch || a.cyl!==b.cyl || a.dial!==b.dial){ ok = false; break; }
-    }
-    if(ok) return w;
-  }
-  return 0;
+      var a=model[p],b=model[p+w];
+      if(a.ch!==b.ch||a.cyl!==b.cyl||a.dial!==b.dial){ok=false;break;}}
+    if(ok)return w;}return 0;
 }
-
-/* --- Drawing --- */
-function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-function shade(hex, amt){
-  var n = parseInt(hex.slice(1),16);
-  var r = clamp(((n>>16)&255)+amt,0,255), g = clamp(((n>>8)&255)+amt,0,255), b = clamp((n&255)+amt,0,255);
-  return "rgb("+r+","+g+","+b+")";
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function shade(hex,amt){
+  var n=parseInt(hex.slice(1),16);
+  var r=clamp(((n>>16)&255)+amt,0,255),g=clamp(((n>>8)&255)+amt,0,255),b=clamp((n&255)+amt,0,255);
+  return"rgb("+r+","+g+","+b+")";
 }
 function drawLoop(ctx,x,y,w,h,color,type){
-  var lw = Math.max(2.4, w*0.3);
-  ctx.lineCap = "round"; ctx.lineJoin = "round";
+  var lw=Math.max(2.4,w*0.3);
+  ctx.lineCap="round";ctx.lineJoin="round";
   function V(top,bot,col,width){
-    ctx.strokeStyle = col; ctx.lineWidth = width;
-    ctx.beginPath();
-    ctx.moveTo(x+w*0.2, y+top); ctx.lineTo(x+w*0.5, y+bot); ctx.lineTo(x+w*0.8, y+top);
-    ctx.stroke();
-  }
-  if(type==="K"){
-    V(h*0.14, h*0.86, shade(color,-55), lw+1.4);
-    V(h*0.14, h*0.86, color, lw);
-  } else if(type==="T"){
-    V(h*0.5, h*0.88, shade(color,-55), lw*0.8+1.2);
-    V(h*0.5, h*0.88, color, lw*0.8);
-    ctx.strokeStyle = shade(color,-55); ctx.lineWidth = lw*0.55+1.2;
-    ctx.beginPath(); ctx.moveTo(x+w*0.14,y+h*0.26); ctx.lineTo(x+w*0.86,y+h*0.26); ctx.stroke();
-    ctx.strokeStyle = color; ctx.lineWidth = lw*0.55;
-    ctx.beginPath(); ctx.moveTo(x+w*0.14,y+h*0.26); ctx.lineTo(x+w*0.86,y+h*0.26); ctx.stroke();
+    ctx.strokeStyle=col;ctx.lineWidth=width;ctx.beginPath();
+    ctx.moveTo(x+w*.2,y+top);ctx.lineTo(x+w*.5,y+bot);ctx.lineTo(x+w*.8,y+top);ctx.stroke();}
+  if(type==="K"){V(h*.14,h*.86,shade(color,-55),lw+1.4);V(h*.14,h*.86,color,lw);}
+  else if(type==="T"){
+    V(h*.5,h*.88,shade(color,-55),lw*.8+1.2);V(h*.5,h*.88,color,lw*.8);
+    ctx.strokeStyle=shade(color,-55);ctx.lineWidth=lw*.55+1.2;
+    ctx.beginPath();ctx.moveTo(x+w*.14,y+h*.26);ctx.lineTo(x+w*.86,y+h*.26);ctx.stroke();
+    ctx.strokeStyle=color;ctx.lineWidth=lw*.55;
+    ctx.beginPath();ctx.moveTo(x+w*.14,y+h*.26);ctx.lineTo(x+w*.86,y+h*.26);ctx.stroke();
   } else {
-    ctx.save();
-    ctx.globalAlpha = 0.5; ctx.strokeStyle = color; ctx.lineWidth = 1.4; ctx.setLineDash([3,3]);
-    ctx.beginPath(); ctx.moveTo(x+1,y+h*0.5); ctx.lineTo(x+w-1,y+h*0.5); ctx.stroke();
-    ctx.restore();
+    ctx.save();ctx.globalAlpha=0.4;ctx.strokeStyle=color;ctx.lineWidth=1.2;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(x+1,y+h*.5);ctx.lineTo(x+w-1,y+h*.5);ctx.stroke();ctx.restore();
   }
 }
 function drawCell(ctx,x,y,w,h,color,type){
-  var pad = 1;
-  ctx.fillStyle = cssVar("--m");
-  ctx.fillRect(x+pad,y+pad,w-pad*2,h-pad*2);
-  if(type==="K"){
-    ctx.fillStyle = color; ctx.fillRect(x+pad,y+pad,w-pad*2,h-pad*2);
-  } else if(type==="T"){
-    ctx.fillStyle = color; ctx.fillRect(x+pad,y+pad,w-pad*2,(h-pad*2)*0.45);
-    ctx.globalAlpha = .35; ctx.fillRect(x+pad,y+pad+(h-pad*2)*0.45,w-pad*2,(h-pad*2)*0.55); ctx.globalAlpha = 1;
-  }
+  var pad=1;ctx.fillStyle=cssVar("--surface2");ctx.fillRect(x+pad,y+pad,w-pad*2,h-pad*2);
+  if(type==="K"){ctx.fillStyle=color;ctx.fillRect(x+pad,y+pad,w-pad*2,h-pad*2);}
+  else if(type==="T"){ctx.fillStyle=color;ctx.fillRect(x+pad,y+pad,w-pad*2,(h-pad*2)*.45);
+    ctx.globalAlpha=.35;ctx.fillRect(x+pad,y+pad+(h-pad*2)*.45,w-pad*2,(h-pad*2)*.55);ctx.globalAlpha=1;}
 }
-
 function draw(){
-  var cv = $("cv"), ctx = cv.getContext("2d");
-  var model = build();
-  var total = totalCourses();
-  S.upto = clamp(S.upto,1,total);
+  var cv=$("cv"),ctx=cv.getContext("2d");
+  var model=build(),total=totalCourses();S.upto=clamp(S.upto,1,total);
   var cols;
-  if(S.view==="face") cols = model.filter(function(m){ return m.cyl; });
-  else if(S.view==="back") cols = model.filter(function(m){ return m.dial; });
-  else cols = model;
-
-  var margin = 30, topPad = 16, wrapW = $("wrap").clientWidth - 16;
-  var n = Math.max(1, cols.length);
-  var base = clamp(Math.floor((wrapW - margin) / n), 11, 28);
-  var cw = Math.round(base * S.zoom);
-  var mapMode = S.view==="map";
-  var chh = mapMode ? Math.round(cw*1.5) : Math.round(cw*0.85);
-  var W = margin + n*cw + 2, H = total*chh + topPad + 4;
-  var dpr = window.devicePixelRatio || 1;
-  cv.width = W*dpr; cv.height = H*dpr; cv.style.width = W+"px"; cv.style.height = H+"px";
-  ctx.setTransform(dpr,0,0,dpr,0,topPad*dpr);
-  ctx.clearRect(0,-topPad,W,H);
-
-  ctx.strokeStyle = cssVar("--grid"); ctx.lineWidth = 1;
-  for(var r=0;r<=total;r++){ var yy = r*chh+0.5; ctx.beginPath(); ctx.moveTo(margin,yy); ctx.lineTo(W,yy); ctx.stroke(); }
-
-  var accent = cssVar("--accent");
-  ctx.font = "10px sans-serif"; ctx.textBaseline = "middle";
+  if(S.view==="face")cols=model.filter(function(m){return m.cyl;});
+  else if(S.view==="back")cols=model.filter(function(m){return m.dial;});
+  else cols=model;
+  var mg=32,tp=16,ww=$("wrap").clientWidth-24;
+  var n=Math.max(1,cols.length);
+  var base=clamp(Math.floor((ww-mg)/n),11,28);
+  var cw=Math.round(base*S.zoom),mm=S.view==="map";
+  var chh=mm?Math.round(cw*1.5):Math.round(cw*.85);
+  var W=mg+n*cw+2,H=total*chh+tp+4;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+"px";cv.style.height=H+"px";
+  ctx.setTransform(dpr,0,0,dpr,0,tp*dpr);ctx.clearRect(0,-tp,W,H);
+  ctx.strokeStyle=cssVar("--border");ctx.lineWidth=.7;
+  for(var r=0;r<=total;r++){var yy=r*chh+.5;ctx.beginPath();ctx.moveTo(mg,yy);ctx.lineTo(W,yy);ctx.stroke();}
+  var acc=cssVar("--brand");
+  ctx.font="bold 9.5px Inter,sans-serif";ctx.textBaseline="middle";
   for(var c=0;c<S.upto;c++){
-    var f = c % S.F, cam = S.cams[f];
-    var y = (total-1-c)*chh;
-    if(S.upto<total && c===S.upto-1){
-      ctx.save(); ctx.globalAlpha = 0.16; ctx.fillStyle = accent; ctx.fillRect(margin,y,W-margin,chh); ctx.restore();
-    }
-    ctx.fillStyle = cssVar("--mute"); ctx.textAlign = "right";
-    ctx.fillText("F"+(f+1), margin-5, y+chh/2);
+    var f=c%S.F,cam=S.cams[f],y=(total-1-c)*chh;
+    if(S.upto<total&&c===S.upto-1){ctx.save();ctx.globalAlpha=.12;ctx.fillStyle=acc;ctx.fillRect(mg,y,W-mg,chh);ctx.restore();}
+    ctx.fillStyle=cssVar("--text3");ctx.textAlign="right";ctx.fillText("F"+(f+1),mg-5,y+chh/2);
     for(var i=0;i<cols.length;i++){
-      var m = cols[i], x = margin + i*cw;
-      if(!mapMode){
-        var type = S.view==="face" ? action(cam,"cyl",m.cyl) : action(cam,"dial",m.dial);
-        drawLoop(ctx,x,y,cw,chh,cam.color,type);
+      var m=cols[i],x=mg+i*cw;
+      if(!mm){
+        var tp2=S.view==="face"?action(cam,"cyl",m.cyl):action(cam,"dial",m.dial);
+        drawLoop(ctx,x,y,cw,chh,cam.color,tp2);
       } else {
-        var half = chh/2;
-        if(m.dial) drawCell(ctx,x,y,cw,half,cam.color,action(cam,"dial",m.dial));
-        if(m.cyl)  drawCell(ctx,x,y+half,cw,half,cam.color,action(cam,"cyl",m.cyl));
+        var half=chh/2;
+        if(m.dial)drawCell(ctx,x,y,cw,half,cam.color,action(cam,"dial",m.dial));
+        if(m.cyl)drawCell(ctx,x,y+half,cw,half,cam.color,action(cam,"cyl",m.cyl));
       }
     }
   }
-
-  // one-repeat box
-  var rw = repeatWidth(model);
+  var rw=repeatWidth(model);
   if(rw>0){
-    var k = cols.filter(function(m){ return m.p < rw; }).length;
+    var k=cols.filter(function(m){return m.p<rw;}).length;
     if(k>0){
-      var bx = margin+1, by = (total-S.F)*chh+1, bw = k*cw-2, bh = S.F*chh-2;
-      ctx.save(); ctx.setLineDash([6,4]); ctx.strokeStyle = accent; ctx.lineWidth = 2; ctx.strokeRect(bx,by,bw,bh);
-      ctx.setLineDash([]); ctx.fillStyle = accent; ctx.font = "600 11px sans-serif"; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
-      ctx.fillText("১টি রিপিট", bx+2, by-2);
-      ctx.restore();
+      var bx=mg+1,by=(total-S.F)*chh+1,bw=k*cw-2,bh=S.F*chh-2;
+      ctx.save();ctx.setLineDash([5,4]);ctx.strokeStyle=acc;ctx.lineWidth=1.8;ctx.strokeRect(bx,by,bw,bh);
+      ctx.setLineDash([]);ctx.fillStyle=acc;ctx.font="700 10px Inter,sans-serif";
+      ctx.textAlign="left";ctx.textBaseline="bottom";ctx.fillText("১ রিপিট",bx+2,by-2);ctx.restore();
     }
   }
-
-  var hints = {
-    face:"সামনের দিক: শুধু সিলিন্ডার সুইয়ের লুপ। নিচ থেকে উপরে কোর্স বাড়ছে, বাঁ দিকে ফিডার নম্বর। ড্যাশ করা বক্স = ১টা পূর্ণ রিপিট।",
-    back:"পেছনের দিক: শুধু ডায়াল সুইয়ের লুপ। ফাঁকা ঘর মানে ওই সুই মিস করেছে, ডটেড দাগ সুতা ভেসে যাওয়া।",
-    map:"সুই-ম্যাপ: প্রতি কোর্সে উপরের সারি ডায়াল, নিচের সারি সিলিন্ডার। পূর্ণ ঘর = নিট, অর্ধেক = টাক, ফাঁকা = মিস।"
-  };
-  $("viewHint").textContent = hints[S.view];
-  updateNow();
+  var hints={face:"সামনের দিক: সিলিন্ডার লুপ। নিচ থেকে উপরে কোর্স বাড়ছে।",
+    back:"পেছনের দিক: ডায়াল লুপ। ফাঁকা ঘর = মিস।",
+    map:"সুই-ম্যাপ: উপরে ডায়াল, নিচে সিলিন্ডার। পূর্ণ=নিট, অর্ধেক=টাক।"};
+  $("viewHint").textContent=hints[S.view];updateNow();
 }
-
 function updateNow(){
-  var total = totalCourses(), c = S.upto-1, f = c % S.F, cam = S.cams[f];
-  var model = build(), sets = presentSets(model);
-  var g = {K:[],T:[],M:[]};
-  sets.forEach(function(s){ g[cam[s.key]].push(s.name); });
-  var parts = [];
-  if(g.K.length) parts.push("নিট: "+g.K.join(", "));
-  if(g.T.length) parts.push("টাক: "+g.T.join(", "));
-  if(g.M.length) parts.push("মিস: "+g.M.join(", "));
-  $("now").textContent = "কোর্স "+S.upto+"/"+total+" · ফিডার "+(f+1)+(cam.label ? " ("+cam.label+")" : "")+" → "+parts.join(" | ");
-  var up = $("upto"); up.max = total; up.value = S.upto;
+  var total=totalCourses(),c=S.upto-1,f=c%S.F,cam=S.cams[f];
+  var model=build(),sets=presentSets(model),g={K:[],T:[],M:[]};
+  sets.forEach(function(s){g[cam[s.key]].push(s.name);});
+  var parts=[];
+  if(g.K.length)parts.push("নিট: "+g.K.join(", "));
+  if(g.T.length)parts.push("টাক: "+g.T.join(", "));
+  if(g.M.length)parts.push("মিস: "+g.M.join(", "));
+  $("now").textContent="কোর্স "+S.upto+"/"+total+" · ফিডার "+(f+1)+(cam.label?" ("+cam.label+")":"")+" → "+parts.join(" | ");
+  var up=$("upto");up.max=total;up.value=S.upto;
 }
-
-/* --- Analysis --- */
-function longestRun(seq, val){
-  var k = seq.indexOf("K");
-  if(k<0) return seq.length;
-  var best = 0, cur = 0;
-  for(var i=1;i<=seq.length;i++){
-    var v = seq[(k+i) % seq.length];
-    if(v===val){ cur++; if(cur>best) best=cur; } else { cur=0; }
-  }
+function longestRun(seq,val){
+  var k=seq.indexOf("K");if(k<0)return seq.length;
+  var best=0,cur=0;
+  for(var i=1;i<=seq.length;i++){var v=seq[(k+i)%seq.length];if(v===val){cur++;if(cur>best)best=cur;}else cur=0;}
   return best;
 }
 function analyze(){
-  var model = build(), sets = presentSets(model), list = [];
+  var model=build(),sets=presentSets(model),list=[];
   sets.forEach(function(s){
-    var seq = S.cams.map(function(c){ return c[s.key]; });
-    if(seq.indexOf("K")<0) list.push(s.name+" সেটের সুই কোনো ফিডারে নিট করে না। ফেব্রিকে ওই ওয়েল তৈরি হবে না।");
-    else {
-      if(longestRun(seq,"T")>=3) list.push(s.name+" সেটে টানা ৩+ টাক। লুপ জমে সুতা ছিঁড়তে পারে।");
-      if(longestRun(seq,"M")>=6) list.push(s.name+" সেটে টানা ৬+ মিস। লম্বা ভাসা সুতা বা ঝুলে পড়া লুপ হতে পারে।");
-    }
-  });
-  var ul = $("warn"); ul.innerHTML = "";
-  var li;
-  if(!list.length){ li = document.createElement("li"); li.className = "ok"; li.textContent = "কোনো সমস্যা ধরা পড়েনি।"; ul.appendChild(li); }
-  else list.forEach(function(t){ li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
-  return sets.map(function(s){ return s.key; });
+    var seq=S.cams.map(function(c){return c[s.key];});
+    if(seq.indexOf("K")<0)list.push(s.name+" সেটের সুই কোনো ফিডারে নিট করে না।");
+    else{
+      if(longestRun(seq,"T")>=3)list.push(s.name+" সেটে টানা ৩+ টাক — সুতা ছিঁড়তে পারে।");
+      if(longestRun(seq,"M")>=6)list.push(s.name+" সেটে ৬+ মিস — ভাসা সুতা হতে পারে।");
+    }});
+  var ul=$("warn");ul.innerHTML="";var li;
+  if(!list.length){li=document.createElement("li");li.className="ok";li.textContent="কোনো সমস্যা ধরা পড়েনি।";ul.appendChild(li);}
+  else list.forEach(function(t){li=document.createElement("li");li.textContent=t;ul.appendChild(li);});
+  return sets.map(function(s){return s.key;});
 }
-
-/* --- UI --- */
-function symFor(set, v){ return (set.bed==="dial" && S.mirror) ? SYM_D[v] : SYM[v]; }
-
+function symFor(set,v){return(set.bed==="dial"&&S.mirror)?SYM_D[v]:SYM[v];}
 function renderLegend(){
-  $("legend").innerHTML = S.mirror
-    ? "<span><b>∧</b>সিলিন্ডারে নিট</span><span><b>∨</b>ডায়ালে নিট</span><span><b>—</b>মিস</span><span>ঘরে চাপ দিলে বদলাবে (নিট, টাক, মিস)</span>"
-    : "<span><b>∧</b>নিট</span><span><b>∨</b>টাক</span><span><b>—</b>মিস</span><span>ঘরে চাপ দিলে বদলাবে</span>";
+  $("legend").innerHTML=S.mirror
+    ?"<span class='li'><b>∧</b>সিলিন্ডারে নিট</span><span class='li'><b>∨</b>ডায়ালে নিট</span><span class='li'><b>—</b>মিস</span><span class='li' style='color:var(--brand);font-size:11px'>ঘরে চাপ দিলে বদলাবে</span>"
+    :"<span class='li'><b>∧</b>নিট</span><span class='li'><b>∨</b>টাক</span><span class='li'><b>—</b>মিস</span><span class='li' style='color:var(--brand);font-size:11px'>ঘরে চাপ দিলে বদলাবে</span>";
 }
-
 function renderInfo(){
-  var i = INFO[S.preset] || INFO.custom;
-  $("infoTitle").textContent = i.t;
-  var h = "<p><b>কী:</b> "+i.what+"</p><p><b>কীভাবে ডিজাইন হয়:</b> "+i.how+"</p><p><b>ফেব্রিকে যা দেখবেন:</b> "+i.look+"</p>";
-  if(i.use) h += "<p><b>ব্যবহার:</b> "+i.use+"</p>";
-  if(i.note) h += "<div class=\"note\">"+i.note+"</div>";
-  $("infoBody").innerHTML = h;
+  var i=INFO[S.preset]||INFO.custom;
+  $("infoTitle").textContent=i.t;
+  var h="<p><b>কী:</b> "+i.what+"</p><p><b>কীভাবে:</b> "+i.how+"</p><p><b>দেখবেন:</b> "+i.look+"</p>";
+  if(i.use)h+="<p><b>ব্যবহার:</b> "+i.use+"</p>";
+  if(i.note)h+="<div class='inote'>"+i.note+"</div>";
+  $("infoBody").innerHTML=h;
 }
-
 function buildTable(){
-  var present = analyze();
-  var body = $("camBody"); body.innerHTML = "";
-  S.cams.forEach(function(cam, i){
-    var tr = document.createElement("tr");
-    var td = document.createElement("td"); td.className = "fd"; td.textContent = i+1; tr.appendChild(td);
-
-    td = document.createElement("td"); td.className = "yn";
-    var ci = document.createElement("input"); ci.type = "color"; ci.value = cam.color; ci.setAttribute("aria-label","ফিডার "+(i+1)+" এর সুতার রঙ");
-    ci.addEventListener("input", function(){ cam.color = ci.value; draw(); });
+  var present=analyze();var body=$("camBody");body.innerHTML="";
+  S.cams.forEach(function(cam,i){
+    var tr=document.createElement("tr");
+    var td=document.createElement("td");td.className="fn";td.textContent=i+1;tr.appendChild(td);
+    td=document.createElement("td");td.className="yc";
+    var ci=document.createElement("input");ci.type="color";ci.value=cam.color;
+    ci.addEventListener("input",function(){cam.color=ci.value;draw();});
     td.appendChild(ci);
-    if(cam.label){ var lb = document.createElement("span"); lb.className = "lb"; lb.textContent = cam.label; td.appendChild(lb); }
+    if(cam.label){var lb=document.createElement("span");lb.className="yl";lb.textContent=cam.label;td.appendChild(lb);}
     tr.appendChild(td);
-
     SETS.forEach(function(s){
-      var cell = document.createElement("td");
-      var b = document.createElement("button"); b.className = "cam"; b.dataset.v = cam[s.key]; b.textContent = symFor(s,cam[s.key]);
-      b.setAttribute("aria-label","ফিডার "+(i+1)+" "+s.name);
-      if(present.indexOf(s.key)<0) b.classList.add("off");
-      b.addEventListener("click", function(){
-        cam[s.key] = NEXT[cam[s.key]]; b.dataset.v = cam[s.key]; b.textContent = symFor(s,cam[s.key]);
-        markCustom(); analyze(); draw();
-      });
-      cell.appendChild(b); tr.appendChild(cell);
-    });
-    body.appendChild(tr);
-  });
-  SETS.forEach(function(s){ $(s.head).classList.toggle("off", present.indexOf(s.key)<0); });
+      var cell=document.createElement("td");
+      var b=document.createElement("button");b.className="cb2";b.dataset.v=cam[s.key];
+      b.textContent=symFor(s,cam[s.key]);
+      if(present.indexOf(s.key)<0)b.classList.add("off");
+      b.addEventListener("click",function(){
+        cam[s.key]=NEXT[cam[s.key]];b.dataset.v=cam[s.key];b.textContent=symFor(s,cam[s.key]);
+        markCustom();analyze();draw();});
+      cell.appendChild(b);tr.appendChild(cell);});
+    body.appendChild(tr);});
+  SETS.forEach(function(s){$(s.head).classList.toggle("off",present.indexOf(s.key)<0);});
 }
-
-function markCustom(){
-  if(S.preset!=="custom"){ S.preset = "custom"; $("preset").value = "custom"; renderInfo(); }
-}
-
+function markCustom(){if(S.preset!=="custom"){S.preset="custom";$("preset").value="custom";renderInfo();}}
 function syncControls(){
-  $("fVal").textContent = S.F; $("rVal").textContent = S.rounds; $("wVal").textContent = S.wales;
-  $("layout").value = S.layout; $("cylButt").value = S.cylButt; $("dialButt").value = S.dialButt;
-  $("mirror").checked = S.mirror; $("preset").value = S.preset;
+  $("fVal").textContent=S.F;$("rVal").textContent=S.rounds;$("wVal").textContent=S.wales;
+  $("layout").value=S.layout;$("cylButt").value=S.cylButt;$("dialButt").value=S.dialButt;
+  $("mirror").checked=S.mirror;$("preset").value=S.preset;
 }
-
-function refresh(full){
-  syncControls(); renderLegend();
-  if(full) buildTable(); else analyze();
-  draw();
+function refresh(full){syncControls();renderLegend();if(full)buildTable();else analyze();draw();}
+function sanitize(v,allowed,fallback){
+  v=(v||"").toUpperCase().split("").filter(function(c){return allowed.indexOf(c)>=0;}).join("");
+  return v||fallback;
 }
-
-function sanitize(v, allowed, fallback){
-  v = (v||"").toUpperCase().split("").filter(function(c){ return allowed.indexOf(c)>=0; }).join("");
-  return v || fallback;
-}
-
-/* --- Play --- */
 function stopPlay(){
-  if(timer){ clearInterval(timer); timer = null; }
-  var b = $("play"); if(b) b.textContent = "▶ ধাপে ধাপে";
+  if(timer){clearInterval(timer);timer=null;}
+  $("playIcon").textContent="▶";$("playLabel").textContent="ধাপে ধাপে";
 }
 function startPlay(){
-  if(S.upto >= totalCourses()) S.upto = 1;
-  $("play").textContent = "⏸ থামান";
-  draw();
-  timer = setInterval(function(){
-    if(S.upto >= totalCourses()){ stopPlay(); return; }
-    S.upto++; draw();
-    if(S.upto >= totalCourses()) stopPlay();
-  }, 320);
+  if(S.upto>=totalCourses())S.upto=1;
+  $("playIcon").textContent="⏸";$("playLabel").textContent="থামান";draw();
+  timer=setInterval(function(){
+    if(S.upto>=totalCourses()){stopPlay();return;}
+    S.upto++;draw();if(S.upto>=totalCourses())stopPlay();},320);
 }
-
-$("play").addEventListener("click", function(){ if(timer) stopPlay(); else startPlay(); });
-
-/* --- Theme toggle --- */
+function exportPNG(){
+  var link=document.createElement("a");link.download="knitsim.png";link.href=$("cv").toDataURL("image/png");link.click();
+}
 (function(){
-  var html = document.documentElement;
-  var btn = $("themeBtn");
-  function isDark(){
-    var t = html.getAttribute("data-theme");
-    if(t==="dark") return true;
-    if(t==="light") return false;
-    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-  function applyTheme(){
-    btn.textContent = isDark() ? "☀️" : "🌙";
-  }
-  btn.addEventListener("click", function(){
-    var dark = isDark();
-    html.setAttribute("data-theme", dark ? "light" : "dark");
-    applyTheme();
-  });
-  applyTheme();
+  var html=document.documentElement,btn=$("themeBtn");
+  function isDark(){return html.getAttribute("data-theme")==="dark";}
+  function apply(){btn.textContent=isDark()?"☀️":"🌙";}
+  btn.addEventListener("click",function(){html.setAttribute("data-theme",isDark()?"light":"dark");apply();setTimeout(draw,50);});
+  if(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)html.setAttribute("data-theme","dark");
+  apply();
 })();
-$("upto").addEventListener("input", function(){ stopPlay(); S.upto = parseInt(this.value,10); draw(); });
-$("zoom").addEventListener("change", function(){ S.zoom = parseFloat(this.value); draw(); });
-
-$("preset").addEventListener("change", function(){
-  var v = this.value;
-  if(v==="custom"){ S.preset = "custom"; renderInfo(); return; }
-  loadPreset(v); renderInfo(); refresh(true);
-});
-$("fMinus").addEventListener("click", function(){ setFeeders(S.F-1); markCustom(); resetUpto(); refresh(true); });
-$("fPlus").addEventListener("click", function(){ setFeeders(S.F+1); markCustom(); resetUpto(); refresh(true); });
-$("rMinus").addEventListener("click", function(){ S.rounds = clamp(S.rounds-1,1,20); resetUpto(); refresh(false); });
-$("rPlus").addEventListener("click", function(){ S.rounds = clamp(S.rounds+1,1,20); resetUpto(); refresh(false); });
-$("wMinus").addEventListener("click", function(){ S.wales = clamp(S.wales-2,8,60); refresh(false); });
-$("wPlus").addEventListener("click", function(){ S.wales = clamp(S.wales+2,8,60); refresh(false); });
-$("layout").addEventListener("change", function(){ S.layout = sanitize(this.value,"CDB","CD"); markCustom(); refresh(true); });
-$("cylButt").addEventListener("change", function(){ S.cylButt = sanitize(this.value,"123","1"); markCustom(); refresh(true); });
-$("dialButt").addEventListener("change", function(){ S.dialButt = sanitize(this.value,"12","1"); markCustom(); refresh(true); });
-$("mirror").addEventListener("change", function(){ S.mirror = this.checked; refresh(true); });
-$("sameColor").addEventListener("click", function(){
-  var c = S.cams[0].color; S.cams.forEach(function(x){ x.color = c; }); refresh(true);
-});
-$("stripeColor").addEventListener("click", function(){
-  S.cams.forEach(function(x,i){ x.color = PALETTE[i % PALETTE.length]; }); refresh(true);
-});
-Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(t){
-  t.addEventListener("click", function(){
-    S.view = t.dataset.view;
-    Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(o){ o.setAttribute("aria-pressed", o===t ? "true" : "false"); });
-    draw();
-  });
-});
-
-var rt; window.addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(draw, 120); });
-if(window.matchMedia){
-  var mq = window.matchMedia("(prefers-color-scheme: dark)");
-  if(mq.addEventListener) mq.addEventListener("change", draw);
-}
-new MutationObserver(draw).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
-
-loadPreset("sheet");
-renderInfo();
-refresh(true);
+$("play").addEventListener("click",function(){if(timer)stopPlay();else startPlay();});
+$("exportBtn").addEventListener("click",exportPNG);
+$("upto").addEventListener("input",function(){stopPlay();S.upto=parseInt(this.value,10);draw();});
+$("zoom").addEventListener("change",function(){S.zoom=parseFloat(this.value);draw();});
+$("preset").addEventListener("change",function(){var v=this.value;if(v==="custom"){S.preset="custom";renderInfo();return;}loadPreset(v);renderInfo();refresh(true);});
+$("fMinus").addEventListener("click",function(){setFeeders(S.F-1);markCustom();resetUpto();refresh(true);});
+$("fPlus").addEventListener("click",function(){setFeeders(S.F+1);markCustom();resetUpto();refresh(true);});
+$("rMinus").addEventListener("click",function(){S.rounds=clamp(S.rounds-1,1,20);resetUpto();refresh(false);});
+$("rPlus").addEventListener("click",function(){S.rounds=clamp(S.rounds+1,1,20);resetUpto();refresh(false);});
+$("wMinus").addEventListener("click",function(){S.wales=clamp(S.wales-2,8,60);refresh(false);});
+$("wPlus").addEventListener("click",function(){S.wales=clamp(S.wales+2,8,60);refresh(false);});
+$("layout").addEventListener("change",function(){S.layout=sanitize(this.value,"CDB","CD");markCustom();refresh(true);});
+$("cylButt").addEventListener("change",function(){S.cylButt=sanitize(this.value,"123","1");markCustom();refresh(true);});
+$("dialButt").addEventListener("change",function(){S.dialButt=sanitize(this.value,"12","1");markCustom();refresh(true);});
+$("mirror").addEventListener("change",function(){S.mirror=this.checked;refresh(true);});
+$("sameColor").addEventListener("click",function(){var c=S.cams[0].color;S.cams.forEach(function(x){x.color=c;});refresh(true);});
+$("stripeColor").addEventListener("click",function(){S.cams.forEach(function(x,i){x.color=PALETTE[i%PALETTE.length];});refresh(true);});
+document.querySelectorAll(".vtab").forEach(function(t){
+  t.addEventListener("click",function(){
+    S.view=t.dataset.view;
+    document.querySelectorAll(".vtab").forEach(function(o){o.setAttribute("aria-pressed",o===t?"true":"false");});
+    draw();});});
+var rt;window.addEventListener("resize",function(){clearTimeout(rt);rt=setTimeout(draw,120);});
+if(window.matchMedia){var mq=window.matchMedia("(prefers-color-scheme: dark)");if(mq.addEventListener)mq.addEventListener("change",draw);}
+new MutationObserver(function(){draw();}).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+loadPreset("sheet");renderInfo();refresh(true);
 })();
 </script>
 </body>
