@@ -146,14 +146,14 @@ function drawLoop(ctx,x,y,w,h,color,type){
   if (style === "realistic") {
     if(type === "K"){
       // Realistic curved Bézier knit stitch
-      function pathLoop(){
+      var pathLoop = function(){
         ctx.beginPath();
         ctx.moveTo(x - w*0.04, y + h*0.88);
         ctx.quadraticCurveTo(x + w*0.14, y + h*0.96, x + w*0.22, y + h*0.82);
         ctx.bezierCurveTo(x + w*0.30, y + h*0.50, x + w*0.22, y + h*0.14, x + w*0.50, y + h*0.12);
         ctx.bezierCurveTo(x + w*0.78, y + h*0.14, x + w*0.70, y + h*0.50, x + w*0.78, y + h*0.82);
         ctx.quadraticCurveTo(x + w*0.86, y + h*0.96, x + w*1.04, y + h*0.88);
-      }
+      };
       // 1. Ambient depth drop shadow
       ctx.save();
       ctx.strokeStyle = "rgba(0,0,0,0.22)";
@@ -184,17 +184,17 @@ function drawLoop(ctx,x,y,w,h,color,type){
 
     } else if(type === "T"){
       // Realistic Tuck stitch: Held loop + Accumulated double tuck yarn bridge
-      function pathTuckHeld(){
+      var pathTuckHeld = function(){
         ctx.beginPath();
         ctx.moveTo(x + w*0.20, y + h*0.90);
         ctx.bezierCurveTo(x + w*0.26, y + h*0.58, x + w*0.24, y + h*0.28, x + w*0.50, y + h*0.24);
         ctx.bezierCurveTo(x + w*0.76, y + h*0.28, x + w*0.74, y + h*0.58, x + w*0.80, y + h*0.90);
-      }
-      function pathTuckBar(){
+      };
+      var pathTuckBar = function(){
         ctx.beginPath();
         ctx.moveTo(x + w*0.06, y + h*0.38);
         ctx.quadraticCurveTo(x + w*0.50, y + h*0.46, x + w*0.94, y + h*0.38);
-      }
+      };
 
       // Held loop
       ctx.strokeStyle = shade(color, -40);
@@ -247,10 +247,10 @@ function drawLoop(ctx,x,y,w,h,color,type){
     ctx.shadowBlur = 4;
     ctx.shadowOffsetY = 2;
 
-    function V(top,bot,col,width){
+    var V = function(top,bot,col,width){
       ctx.strokeStyle=col;ctx.lineWidth=width;ctx.beginPath();
       ctx.moveTo(x+w*.2,y+top);ctx.lineTo(x+w*.5,y+bot);ctx.lineTo(x+w*.8,y+top);ctx.stroke();
-    }
+    };
     if(type==="K"){
       V(h*.14,h*.86,shade(color,-40),lw+1.4);
       V(h*.14,h*.86,color,lw);
@@ -267,10 +267,10 @@ function drawLoop(ctx,x,y,w,h,color,type){
 
   } else {
     // Technical CAD Mode
-    function V(top,bot,col,width){
+    var V = function(top,bot,col,width){
       ctx.strokeStyle=col;ctx.lineWidth=width;ctx.beginPath();
       ctx.moveTo(x+w*.2,y+top);ctx.lineTo(x+w*.5,y+bot);ctx.lineTo(x+w*.8,y+top);ctx.stroke();
-    }
+    };
     if(type==="K"){
       V(h*.14,h*.86,shade(color,-55),lw+1.4);
       V(h*.14,h*.86,color,lw);
