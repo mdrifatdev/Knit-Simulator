@@ -138,130 +138,148 @@ function shade(hex,amt){
   return"rgb("+r+","+g+","+b+")";
 }
 
+/* ── Premium Stitch Renderer ──────────────────────── */
 function drawLoop(ctx,x,y,w,h,color,type){
   var style = S.renderStyle || "realistic";
-  var lw = Math.max(2.8, w * 0.28);
+  var lw = Math.max(3.0, w * 0.30);
   ctx.lineCap = "round"; ctx.lineJoin = "round";
 
   if (style === "realistic") {
     if(type === "K"){
-      // Realistic curved Bézier knit stitch
+      // Premium 3-layer knit stitch with wider Bezier sweep
       var pathLoop = function(){
         ctx.beginPath();
-        ctx.moveTo(x - w*0.04, y + h*0.88);
-        ctx.quadraticCurveTo(x + w*0.14, y + h*0.96, x + w*0.22, y + h*0.82);
-        ctx.bezierCurveTo(x + w*0.30, y + h*0.50, x + w*0.22, y + h*0.14, x + w*0.50, y + h*0.12);
-        ctx.bezierCurveTo(x + w*0.78, y + h*0.14, x + w*0.70, y + h*0.50, x + w*0.78, y + h*0.82);
-        ctx.quadraticCurveTo(x + w*0.86, y + h*0.96, x + w*1.04, y + h*0.88);
+        ctx.moveTo(x - w*0.06, y + h*0.90);
+        ctx.quadraticCurveTo(x + w*0.10, y + h*0.98, x + w*0.20, y + h*0.82);
+        ctx.bezierCurveTo(x + w*0.28, y + h*0.50, x + w*0.20, y + h*0.10, x + w*0.50, y + h*0.08);
+        ctx.bezierCurveTo(x + w*0.80, y + h*0.10, x + w*0.72, y + h*0.50, x + w*0.80, y + h*0.82);
+        ctx.quadraticCurveTo(x + w*0.90, y + h*0.98, x + w*1.06, y + h*0.90);
       };
-      // 1. Ambient depth drop shadow
+      // Outer glow / shadow
       ctx.save();
-      ctx.strokeStyle = "rgba(0,0,0,0.22)";
-      ctx.lineWidth = lw + 2.6;
-      pathLoop();
-      ctx.stroke();
+      ctx.strokeStyle = "rgba(0,0,0,0.28)";
+      ctx.lineWidth = lw + 3.5;
+      ctx.globalAlpha = 0.6;
+      pathLoop(); ctx.stroke();
+      ctx.globalAlpha = 1.0;
       ctx.restore();
-
-      // 2. Base yarn tube (dark contour rim)
-      ctx.strokeStyle = shade(color, -45);
-      ctx.lineWidth = lw + 1.2;
-      pathLoop();
-      ctx.stroke();
-
-      // 3. Core yarn body (vibrant base color)
+      // Dark rim
+      ctx.strokeStyle = shade(color, -55);
+      ctx.lineWidth = lw + 1.6;
+      pathLoop(); ctx.stroke();
+      // Core fill
       ctx.strokeStyle = color;
       ctx.lineWidth = lw;
-      pathLoop();
-      ctx.stroke();
-
-      // 4. Specular yarn 3D highlight (glossy tubular ridge)
-      ctx.strokeStyle = shade(color, +70);
-      ctx.lineWidth = Math.max(0.9, lw * 0.32);
-      ctx.globalAlpha = 0.75;
-      pathLoop();
-      ctx.stroke();
+      pathLoop(); ctx.stroke();
+      // Mid highlight
+      ctx.strokeStyle = shade(color, +50);
+      ctx.lineWidth = Math.max(1.0, lw * 0.38);
+      ctx.globalAlpha = 0.65;
+      pathLoop(); ctx.stroke();
+      // Inner specular
+      ctx.strokeStyle = shade(color, +95);
+      ctx.lineWidth = Math.max(0.5, lw * 0.14);
+      ctx.globalAlpha = 0.45;
+      pathLoop(); ctx.stroke();
       ctx.globalAlpha = 1.0;
 
     } else if(type === "T"){
-      // Realistic Tuck stitch: Held loop + Accumulated double tuck yarn bridge
+      // Tuck: held loop U-shape + prominent cross bar
       var pathTuckHeld = function(){
         ctx.beginPath();
-        ctx.moveTo(x + w*0.20, y + h*0.90);
-        ctx.bezierCurveTo(x + w*0.26, y + h*0.58, x + w*0.24, y + h*0.28, x + w*0.50, y + h*0.24);
-        ctx.bezierCurveTo(x + w*0.76, y + h*0.28, x + w*0.74, y + h*0.58, x + w*0.80, y + h*0.90);
+        ctx.moveTo(x + w*0.18, y + h*0.92);
+        ctx.bezierCurveTo(x + w*0.22, y + h*0.60, x + w*0.20, y + h*0.26, x + w*0.50, y + h*0.22);
+        ctx.bezierCurveTo(x + w*0.80, y + h*0.26, x + w*0.78, y + h*0.60, x + w*0.82, y + h*0.92);
       };
       var pathTuckBar = function(){
         ctx.beginPath();
-        ctx.moveTo(x + w*0.06, y + h*0.38);
-        ctx.quadraticCurveTo(x + w*0.50, y + h*0.46, x + w*0.94, y + h*0.38);
+        ctx.moveTo(x + w*0.04, y + h*0.36);
+        ctx.bezierCurveTo(x + w*0.28, y + h*0.44, x + w*0.72, y + h*0.44, x + w*0.96, y + h*0.36);
       };
-
-      // Held loop
-      ctx.strokeStyle = shade(color, -40);
-      ctx.lineWidth = lw * 0.88 + 1.4;
+      // Held loop — shadow, rim, fill
+      ctx.save();
+      ctx.strokeStyle = "rgba(0,0,0,0.20)";
+      ctx.lineWidth = lw * 0.90 + 2.0;
+      ctx.globalAlpha = 0.55;
+      pathTuckHeld(); ctx.stroke();
+      ctx.globalAlpha = 1.0;
+      ctx.restore();
+      ctx.strokeStyle = shade(color, -50);
+      ctx.lineWidth = lw * 0.90 + 1.4;
       pathTuckHeld(); ctx.stroke();
       ctx.strokeStyle = color;
-      ctx.lineWidth = lw * 0.88;
+      ctx.lineWidth = lw * 0.90;
       pathTuckHeld(); ctx.stroke();
-
-      // Tuck accumulated cross bar with drop shadow
+      ctx.strokeStyle = shade(color, +55);
+      ctx.lineWidth = Math.max(0.8, lw * 0.28);
+      ctx.globalAlpha = 0.55;
+      pathTuckHeld(); ctx.stroke();
+      ctx.globalAlpha = 1.0;
+      // Cross bar — shadow, rim, fill, specular
       ctx.save();
-      ctx.strokeStyle = "rgba(0,0,0,0.25)";
-      ctx.lineWidth = lw + 2.4;
+      ctx.strokeStyle = "rgba(0,0,0,0.28)";
+      ctx.lineWidth = lw + 3.0;
+      ctx.globalAlpha = 0.5;
       pathTuckBar(); ctx.stroke();
+      ctx.globalAlpha = 1.0;
       ctx.restore();
-
-      ctx.strokeStyle = shade(color, -35);
-      ctx.lineWidth = lw + 1.2;
+      ctx.strokeStyle = shade(color, -45);
+      ctx.lineWidth = lw + 1.6;
       pathTuckBar(); ctx.stroke();
-
       ctx.strokeStyle = color;
       ctx.lineWidth = lw;
       pathTuckBar(); ctx.stroke();
-
-      // Specular highlight on tuck bar
-      ctx.strokeStyle = shade(color, +70);
+      ctx.strokeStyle = shade(color, +75);
       ctx.lineWidth = Math.max(1.0, lw * 0.30);
       ctx.globalAlpha = 0.80;
       pathTuckBar(); ctx.stroke();
       ctx.globalAlpha = 1.0;
 
     } else {
-      // Realistic Miss stitch: Catenary floating strand behind needle
+      // Miss: subtle floating catenary + center dot
+      var missX0 = x + 1, missX1 = x + w - 1, midY = y + h * 0.50;
       ctx.save();
       ctx.strokeStyle = color;
-      ctx.lineWidth = Math.max(1.5, lw * 0.45);
-      ctx.globalAlpha = 0.45;
-      ctx.setLineDash([4, 3]);
+      ctx.lineWidth = Math.max(1.4, lw * 0.40);
+      ctx.globalAlpha = 0.38;
+      ctx.setLineDash([3.5, 3]);
       ctx.beginPath();
-      ctx.moveTo(x + 1, y + h*0.50);
-      ctx.quadraticCurveTo(x + w*0.50, y + h*0.56, x + w - 1, y + h*0.50);
+      ctx.moveTo(missX0, midY);
+      ctx.quadraticCurveTo(x + w*0.50, y + h*0.60, missX1, midY);
       ctx.stroke();
+      ctx.setLineDash([]);
+      // Tiny center needle dot
+      ctx.globalAlpha = 0.28;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x + w*0.50, midY + h*0.06, Math.max(1.2, lw*0.22), 0, Math.PI*2);
+      ctx.fill();
       ctx.restore();
     }
 
   } else if (style === "shadow") {
-    // Shadow Stitch Mode
     ctx.save();
-    ctx.shadowColor = "rgba(0,0,0,0.30)";
-    ctx.shadowBlur = 4;
+    ctx.shadowColor = "rgba(0,0,0,0.35)";
+    ctx.shadowBlur = 5;
     ctx.shadowOffsetY = 2;
-
     var V = function(top,bot,col,width){
       ctx.strokeStyle=col;ctx.lineWidth=width;ctx.beginPath();
-      ctx.moveTo(x+w*.2,y+top);ctx.lineTo(x+w*.5,y+bot);ctx.lineTo(x+w*.8,y+top);ctx.stroke();
+      ctx.moveTo(x+w*.18,y+top);ctx.lineTo(x+w*.50,y+bot);ctx.lineTo(x+w*.82,y+top);ctx.stroke();
     };
     if(type==="K"){
-      V(h*.14,h*.86,shade(color,-40),lw+1.4);
-      V(h*.14,h*.86,color,lw);
+      V(h*.12,h*.88,shade(color,-50),lw+1.8);
+      V(h*.12,h*.88,color,lw);
+      V(h*.12,h*.88,shade(color,+65),lw*0.28);
     } else if(type==="T"){
-      V(h*.5,h*.88,shade(color,-40),lw*.8+1.2);
-      V(h*.5,h*.88,color,lw*.8);
-      ctx.strokeStyle=color;ctx.lineWidth=lw*.65;
-      ctx.beginPath();ctx.moveTo(x+w*.12,y+h*.28);ctx.lineTo(x+w*.88,y+h*.28);ctx.stroke();
+      V(h*.48,h*.90,shade(color,-45),lw*.85+1.4);
+      V(h*.48,h*.90,color,lw*.85);
+      ctx.strokeStyle=shade(color,-35);ctx.lineWidth=lw*0.70+1.2;
+      ctx.beginPath();ctx.moveTo(x+w*.10,y+h*.26);ctx.quadraticCurveTo(x+w*.50,y+h*.34,x+w*.90,y+h*.26);ctx.stroke();
+      ctx.strokeStyle=color;ctx.lineWidth=lw*0.70;
+      ctx.beginPath();ctx.moveTo(x+w*.10,y+h*.26);ctx.quadraticCurveTo(x+w*.50,y+h*.34,x+w*.90,y+h*.26);ctx.stroke();
     } else {
-      ctx.globalAlpha=0.4;ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.setLineDash([3,3]);
-      ctx.beginPath();ctx.moveTo(x+1,y+h*.5);ctx.lineTo(x+w-1,y+h*.5);ctx.stroke();
+      ctx.globalAlpha=0.35;ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.setLineDash([3.5,3]);
+      ctx.beginPath();ctx.moveTo(x+1,y+h*.5);ctx.quadraticCurveTo(x+w*.5,y+h*.58,x+w-1,y+h*.5);ctx.stroke();
     }
     ctx.restore();
 
@@ -269,31 +287,43 @@ function drawLoop(ctx,x,y,w,h,color,type){
     // Technical CAD Mode
     var V = function(top,bot,col,width){
       ctx.strokeStyle=col;ctx.lineWidth=width;ctx.beginPath();
-      ctx.moveTo(x+w*.2,y+top);ctx.lineTo(x+w*.5,y+bot);ctx.lineTo(x+w*.8,y+top);ctx.stroke();
+      ctx.moveTo(x+w*.18,y+top);ctx.lineTo(x+w*.50,y+bot);ctx.lineTo(x+w*.82,y+top);ctx.stroke();
     };
     if(type==="K"){
-      V(h*.14,h*.86,shade(color,-55),lw+1.4);
-      V(h*.14,h*.86,color,lw);
+      V(h*.12,h*.88,shade(color,-60),lw+1.6);
+      V(h*.12,h*.88,color,lw);
     } else if(type==="T"){
-      V(h*.5,h*.88,shade(color,-55),lw*.8+1.2);
-      V(h*.5,h*.88,color,lw*.8);
-      ctx.strokeStyle=shade(color,-55);ctx.lineWidth=lw*.55+1.2;
-      ctx.beginPath();ctx.moveTo(x+w*.14,y+h*.26);ctx.lineTo(x+w*.86,y+h*.26);ctx.stroke();
+      V(h*.48,h*.90,shade(color,-60),lw*.82+1.4);
+      V(h*.48,h*.90,color,lw*.82);
+      ctx.strokeStyle=shade(color,-55);ctx.lineWidth=lw*.55+1.4;
+      ctx.beginPath();ctx.moveTo(x+w*.12,y+h*.24);ctx.lineTo(x+w*.88,y+h*.24);ctx.stroke();
       ctx.strokeStyle=color;ctx.lineWidth=lw*.55;
-      ctx.beginPath();ctx.moveTo(x+w*.14,y+h*.26);ctx.lineTo(x+w*.86,y+h*.26);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+w*.12,y+h*.24);ctx.lineTo(x+w*.88,y+h*.24);ctx.stroke();
     } else {
-      ctx.save();ctx.globalAlpha=0.4;ctx.strokeStyle=color;ctx.lineWidth=1.2;ctx.setLineDash([3,3]);
+      ctx.save();ctx.globalAlpha=0.35;ctx.strokeStyle=color;ctx.lineWidth=1.2;ctx.setLineDash([3,3]);
       ctx.beginPath();ctx.moveTo(x+1,y+h*.5);ctx.lineTo(x+w-1,y+h*.5);ctx.stroke();ctx.restore();
     }
   }
 }
 
 function drawCell(ctx,x,y,w,h,color,type){
-  var pad=1;ctx.fillStyle=cssVar("--surface2");ctx.fillRect(x+pad,y+pad,w-pad*2,h-pad*2);
-  if(type==="K"){ctx.fillStyle=color;ctx.fillRect(x+pad,y+pad,w-pad*2,h-pad*2);}
-  else if(type==="T"){
-    ctx.fillStyle=color;ctx.fillRect(x+pad,y+pad,w-pad*2,(h-pad*2)*.45);
-    ctx.globalAlpha=.35;ctx.fillRect(x+pad,y+pad+(h-pad*2)*.45,w-pad*2,(h-pad*2)*.55);ctx.globalAlpha=1;
+  var pad=1;
+  // Base cell background
+  ctx.fillStyle=cssVar("--surface2");ctx.fillRect(x+pad,y+pad,w-pad*2,h-pad*2);
+  if(type==="K"){
+    // Gradient fill for knit
+    var gK=ctx.createLinearGradient(x+pad,y+pad,x+pad,y+h-pad);
+    gK.addColorStop(0,shade(color,+30));gK.addColorStop(0.5,color);gK.addColorStop(1,shade(color,-30));
+    ctx.fillStyle=gK;ctx.fillRect(x+pad,y+pad,w-pad*2,h-pad*2);
+    // Top specular
+    ctx.fillStyle="rgba(255,255,255,0.20)";
+    ctx.fillRect(x+pad,y+pad,w-pad*2,(h-pad*2)*0.35);
+  } else if(type==="T"){
+    var gT=ctx.createLinearGradient(x+pad,y+pad,x+pad,y+h*0.45);
+    gT.addColorStop(0,shade(color,+20));gT.addColorStop(1,color);
+    ctx.fillStyle=gT;ctx.fillRect(x+pad,y+pad,w-pad*2,(h-pad*2)*.45);
+    ctx.globalAlpha=.28;ctx.fillStyle=color;
+    ctx.fillRect(x+pad,y+pad+(h-pad*2)*.45,w-pad*2,(h-pad*2)*.55);ctx.globalAlpha=1;
   }
 }
 
@@ -308,12 +338,12 @@ function draw(){
   else if(S.view==="back")cols=model.filter(function(m){return m.dial;});
   else cols=model;
 
-  var mg=32,tp=16,ww=$("wrap").clientWidth-24;
+  var mg=34,tp=18,ww=$("wrap").clientWidth-24;
   var n=Math.max(1,cols.length);
-  var base=clamp(Math.floor((ww-mg)/n),11,32);
+  var base=clamp(Math.floor((ww-mg)/n),12,34);
   var cw=Math.round(base*S.zoom),mm=S.view==="map";
-  var chh=mm?Math.round(cw*1.5):Math.round(cw*.85);
-  var W=mg+n*cw+2,H=total*chh+tp+4;
+  var chh=mm?Math.round(cw*1.55):Math.round(cw*0.88);
+  var W=mg+n*cw+2,H=total*chh+tp+6;
   var dpr=window.devicePixelRatio||1;
 
   canvasLayoutInfo={W:W,H:H,mg:mg,tp:tp,cw:cw,chh:chh,cols:cols,total:total};
@@ -321,28 +351,72 @@ function draw(){
   cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+"px";cv.style.height=H+"px";
   ctx.setTransform(dpr,0,0,dpr,0,tp*dpr);
 
-  ctx.fillStyle=cssVar("--surface2")||"#f8fafc";
+  // === Premium canvas background ===
+  var isDark=document.documentElement.getAttribute("data-theme")==="dark";
+  ctx.fillStyle=isDark?"#080b17":"#f4f6fb";
   ctx.fillRect(0,-tp,W,H+tp);
 
-  ctx.strokeStyle=cssVar("--border");ctx.lineWidth=.7;
-  for(var r=0;r<=total;r++){var yy=r*chh+.5;ctx.beginPath();ctx.moveTo(mg,yy);ctx.lineTo(W,yy);ctx.stroke();}
+  // Subtle checkerboard pattern for canvas depth
+  var chkSize=Math.max(6,Math.round(chh/2));
+  ctx.save();
+  ctx.globalAlpha=isDark?0.025:0.035;
+  ctx.fillStyle=isDark?"#818cf8":"#4f46e5";
+  for(var rr=0;rr<Math.ceil((H+tp)/chkSize);rr++){
+    for(var cc2=0;cc2<Math.ceil(W/chkSize);cc2++){
+      if((rr+cc2)%2===0) ctx.fillRect(cc2*chkSize,rr*chkSize-tp,chkSize,chkSize);
+    }
+  }
+  ctx.restore();
+
+  // === Grid lines ===
+  var bdCol=cssVar("--border");
+  ctx.strokeStyle=bdCol;ctx.lineWidth=0.6;
+  for(var r=0;r<=total;r++){
+    var yy=r*chh+0.5;
+    var isRepeatBoundary=(S.F>0&&r%(S.F)===0);
+    ctx.globalAlpha=isRepeatBoundary?0.45:0.20;
+    ctx.lineWidth=isRepeatBoundary?1.0:0.5;
+    ctx.beginPath();ctx.moveTo(mg,yy);ctx.lineTo(W,yy);ctx.stroke();
+  }
+  ctx.globalAlpha=1.0;ctx.lineWidth=0.5;
+  // Column separator lines
+  for(var ci2=0;ci2<=cols.length;ci2++){
+    ctx.globalAlpha=0.12;
+    ctx.beginPath();ctx.moveTo(mg+ci2*cw,0);ctx.lineTo(mg+ci2*cw,H);ctx.stroke();
+  }
+  ctx.globalAlpha=1.0;
 
   var acc=cssVar("--brand");
-  ctx.font="bold 9.5px Inter,sans-serif";ctx.textBaseline="middle";
+  ctx.font="bold 9px Inter,sans-serif";ctx.textBaseline="middle";
 
   for(var c=0;c<S.upto;c++){
-    var f=c%S.F,cam=S.cams[f],y=(total-1-c)*chh;
-    if(S.upto<total&&c===S.upto-1){ctx.save();ctx.globalAlpha=.14;ctx.fillStyle=acc;ctx.fillRect(mg,y,W-mg,chh);ctx.restore();}
-    ctx.fillStyle=cssVar("--text3");ctx.textAlign="right";ctx.fillText("F"+(f+1),mg-5,y+chh/2);
+    var f=c%S.F,cam=S.cams[f],y2=(total-1-c)*chh;
+    // Active course highlight
+    if(S.upto<total&&c===S.upto-1){
+      ctx.save();
+      var glowGrad=ctx.createLinearGradient(mg,y2,W,y2);
+      glowGrad.addColorStop(0,"rgba(99,102,241,0.20)");
+      glowGrad.addColorStop(0.5,"rgba(124,58,237,0.14)");
+      glowGrad.addColorStop(1,"rgba(56,189,248,0.10)");
+      ctx.fillStyle=glowGrad;
+      ctx.fillRect(mg,y2,W-mg,chh);
+      // Left accent bar
+      ctx.fillStyle=acc;
+      ctx.fillRect(mg,y2,3,chh);
+      ctx.restore();
+    }
+    // Feeder label
+    ctx.fillStyle=cssVar("--text3");ctx.textAlign="right";
+    ctx.fillText("F"+(f+1),mg-4,y2+chh/2);
     for(var i=0;i<cols.length;i++){
-      var m=cols[i],x=mg+i*cw;
+      var m=cols[i],x2=mg+i*cw;
       if(!mm){
         var tp2=S.view==="face"?action(cam,"cyl",m.cyl):action(cam,"dial",m.dial);
-        drawLoop(ctx,x,y,cw,chh,cam.color,tp2);
+        drawLoop(ctx,x2,y2,cw,chh,cam.color,tp2);
       } else {
         var half=chh/2;
-        if(m.dial)drawCell(ctx,x,y,cw,half,cam.color,action(cam,"dial",m.dial));
-        if(m.cyl)drawCell(ctx,x,y+half,cw,half,cam.color,action(cam,"cyl",m.cyl));
+        if(m.dial)drawCell(ctx,x2,y2,cw,half,cam.color,action(cam,"dial",m.dial));
+        if(m.cyl)drawCell(ctx,x2,y2+half,cw,half,cam.color,action(cam,"cyl",m.cyl));
       }
     }
   }
@@ -352,9 +426,20 @@ function draw(){
     var k=cols.filter(function(m){return m.p<rw;}).length;
     if(k>0){
       var bx=mg+1,by=(total-S.F)*chh+1,bw=k*cw-2,bh=S.F*chh-2;
-      ctx.save();ctx.setLineDash([5,4]);ctx.strokeStyle=acc;ctx.lineWidth=1.8;ctx.strokeRect(bx,by,bw,bh);
-      ctx.setLineDash([]);ctx.fillStyle=acc;ctx.font="700 10px Inter,sans-serif";
-      ctx.textAlign="left";ctx.textBaseline="bottom";ctx.fillText("১ রিপিট ("+k+"×"+S.F+")",bx+2,by-2);ctx.restore();
+      ctx.save();
+      ctx.setLineDash([5,4]);
+      ctx.strokeStyle=acc;
+      ctx.lineWidth=2.0;
+      ctx.shadowColor=acc;
+      ctx.shadowBlur=6;
+      ctx.strokeRect(bx,by,bw,bh);
+      ctx.shadowBlur=0;
+      ctx.setLineDash([]);
+      ctx.fillStyle=acc;
+      ctx.font="700 10px Inter,sans-serif";
+      ctx.textAlign="left";ctx.textBaseline="bottom";
+      ctx.fillText("১ রিপিট ("+k+"×"+S.F+")",bx+3,by-3);
+      ctx.restore();
       $("badgeRepeat").textContent="রিপিট: "+S.F+" কোর্স × "+k+" ওয়েল";
       $("hudRepeat").textContent=k+"×"+S.F;
     }
