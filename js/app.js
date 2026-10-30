@@ -58,6 +58,16 @@ var S={preset:"sheet",F:18,rounds:2,wales:36,layout:"CD",cylButt:"123",dialButt:
   view:"face",cams:[],mirror:true,upto:36,zoom:1,speed:260,sound:true,renderStyle:"realistic"};
 var timer=null,audioCtx=null;
 
+function isSmallScreen(){
+  return window.innerWidth <= 768 || !!(window.matchMedia && window.matchMedia("(max-width: 768px)").matches);
+}
+function scheduleThreeInit(){
+  if(isSmallScreen() || window.__threeInitRequested || !window.THREE) return;
+  window.__threeInitRequested = true;
+  setTimeout(function(){
+    if(!isSmallScreen()) initThreeFabric();
+  }, 180);
+}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function totalCourses(){return S.F*S.rounds;}
 function resetUpto(){stopPlay();S.upto=totalCourses();}
@@ -372,7 +382,7 @@ function updateThreePreview(){
 }
 
 function draw(){
-  initThreeFabric();
+  scheduleThreeInit();
   var cv=$("cv"),ctx=cv.getContext("2d");
   var model=build(),total=totalCourses();S.upto=clamp(S.upto,1,total);
   var cols;
@@ -599,6 +609,7 @@ function initThreeFabric(){
   if(!wrap) return;
   if(window.knitThree && window.knitThree.renderer) return;
   if(wrap.querySelector(".three-fabric")) return;
+  if(isSmallScreen()) return;
   var host=document.createElement("div");
   host.className="three-fabric";
   wrap.insertBefore(host, wrap.firstChild);
@@ -609,7 +620,7 @@ function initThreeFabric(){
   camera.position.set(0, 0.9, 7.2);
 
   var renderer=new THREE.WebGLRenderer({alpha:true, antialias:true, powerPreference:"high-performance"});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, isSmallScreen() ? 1.25 : 2));
   renderer.setClearColor(0x000000, 0);
   host.appendChild(renderer.domElement);
 
@@ -678,7 +689,7 @@ function initThreeFabric(){
     opacity:0.99,
     transmission:0.02
   });
-  var geometry=new THREE.PlaneGeometry(8, 5.5, 310, 220);
+  var geometry=new THREE.PlaneGeometry(8, 5.5, isSmallScreen() ? 170 : 310, isSmallScreen() ? 110 : 220);
   var mesh=new THREE.Mesh(geometry, material);
   mesh.rotation.x=-0.72; mesh.rotation.y=0.62;
   group.add(mesh);
@@ -697,6 +708,7 @@ function initThreeFabric(){
   window.addEventListener("resize", resize, {passive:true});
 
   function animate(){
+    if(isSmallScreen()) return;
     requestAnimationFrame(animate);
     if(window.knitThree && window.knitThree.group){
       var t=performance.now()*0.001;
