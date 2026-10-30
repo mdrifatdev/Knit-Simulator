@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
 <link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 </head>
 <body>
 
@@ -19,20 +20,15 @@
       <div class="logo-ic">
         <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
-            <linearGradient id="logoKnitG1" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#818cf8"/>
-              <stop offset="0.5" stop-color="#c084fc"/>
+            <linearGradient id="logoKnitG1" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#8b5cf6"/>
               <stop offset="1" stop-color="#38bdf8"/>
             </linearGradient>
-            <linearGradient id="logoKnitG2" x1="28" y1="2" x2="4" y2="30" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#38bdf8"/>
-              <stop offset="1" stop-color="#818cf8"/>
-            </linearGradient>
           </defs>
-          <circle cx="16" cy="16" r="14" stroke="url(#logoKnitG1)" stroke-width="1.8" stroke-dasharray="3 3" opacity="0.35"/>
-          <path d="M9 8C9 4.8 11.8 3.5 14 5.5L16 8L18 5.5C20.2 3.5 23 4.8 23 8C23 12 18.5 17.5 16 20.5C13.5 17.5 9 12 9 8Z" fill="url(#logoKnitG1)" fill-opacity="0.22" stroke="url(#logoKnitG1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M11 23C11 26 13 27.5 16 27.5C19 27.5 21 26 21 23C21 20 18 16 16 14C14 16 11 20 11 23Z" stroke="url(#logoKnitG2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="16" cy="13.5" r="2" fill="#ffffff" fill-opacity="0.95"/>
+          <rect x="4" y="4" width="24" height="24" rx="8" fill="url(#logoKnitG1)" opacity="0.12"/>
+          <path d="M9.5 18.5C9.5 14.36 12.86 11 17 11H21.5C23.43 11 25 12.57 25 14.5V17.5C25 19.43 23.43 21 21.5 21H17C12.86 21 9.5 17.64 9.5 13.5V18.5Z" stroke="url(#logoKnitG1)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 13.5H19.5M12 18.5H19.5M14.5 10V22" stroke="url(#logoKnitG1)" stroke-width="1.7" stroke-linecap="round"/>
+          <circle cx="22" cy="10.5" r="1.8" fill="url(#logoKnitG1)"/>
         </svg>
       </div>
       <div>
@@ -42,10 +38,12 @@
     </a>
     <div class="nav-sp"></div>
     <span class="nav-badge">v2.1 CAD</span>
-    <button class="nav-btn" id="kbdBtn" title="কীবোর্ড শর্টকাট">⌨</button>
-    <button class="nav-btn" id="soundBtn" title="শব্দ ইফেক্ট চালু/বন্ধ">🔊</button>
-    <button class="nav-btn" id="exportBtn" title="PNG ইমেজ ডাউনলোড">⬇</button>
-    <button class="nav-btn" id="themeBtn" title="থিম পরিবর্তন">🌙</button>
+    <button class="nav-btn" id="exportBtn" title="PNG ইমেজ ডাউনলোড" aria-label="Export PNG">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v9"/><path d="M8.5 16.5 12 20l3.5-3.5"/><path d="M4 18.5h16"/></svg>
+    </button>
+    <button class="nav-btn" id="themeBtn" title="থিম পরিবর্তন" aria-label="Toggle theme">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.1M12 19.4v2.1M4.7 4.7l1.5 1.5M17.8 17.8l1.5 1.5M2.5 12h2.1M19.4 12h2.1M4.7 19.3l1.5-1.5M17.8 6.2l1.5-1.5"/></svg>
+    </button>
   </div>
 </nav>
 
@@ -192,8 +190,6 @@
           <div class="ta">
             <button class="bg" id="allKnitBtn">সব নিট (∧)</button>
             <button class="bg" id="allMissBtn">ক্লিয়ার (সব মিস)</button>
-            <button class="bg" id="sameColor">একই রঙ</button>
-            <button class="bg" id="stripeColor">স্ট্রাইপ রঙ</button>
             <label class="toggle">
               <input type="checkbox" id="mirror">
               <span>ডায়ালে নিট = ∨</span>
@@ -263,24 +259,6 @@
 
     </div>
 
-  </div>
-</div>
-
-<!-- Shortcuts Modal -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal-box">
-    <div class="modal-h">
-      <h3>⌨ কীবোর্ড শর্টকাট</h3>
-      <span class="modal-close" id="modalClose">&times;</span>
-    </div>
-    <div class="k-row"><span>প্লে / পজ সিমুলেশন</span> <kbd>Space</kbd></div>
-    <div class="k-row"><span>আগের কোর্স / পরের কোর্স</span> <kbd>←</kbd> / <kbd>→</kbd></div>
-    <div class="k-row"><span>সামনের দিক (Face View)</span> <kbd>1</kbd></div>
-    <div class="k-row"><span>পেছনের দিক (Back View)</span> <kbd>2</kbd></div>
-    <div class="k-row"><span>সুই-ম্যাপ (CAD Map)</span> <kbd>3</kbd></div>
-    <div class="k-row"><span>ডার্ক / লাইট থিম পরিবর্তন</span> <kbd>D</kbd></div>
-    <div class="k-row"><span>PNG ইমেজ এক্সপোর্ট</span> <kbd>E</kbd></div>
-    <div class="k-row"><span>রিসেট / স্টপ</span> <kbd>Esc</kbd></div>
   </div>
 </div>
 
